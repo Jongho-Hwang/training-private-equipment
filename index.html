@@ -13,10 +13,7 @@
     #page1 img { max-width: 100%; height: auto; }
     /* 페이지2 스타일 */
     #page2 { text-align: left; }
-    .blink {
-      /* 깜빡이는 동작 제거, 단순 빨간색 텍스트 적용 */
-      color: red;
-    }
+    .blink { color: red; }
     /* 페이지3 스타일 */
     #worker-container {
       position: relative;
@@ -84,7 +81,8 @@
   <div id="page3" class="page">
     <h2>공통 작업 개인보호구 착용</h2>
     <div id="worker-container" class="center">
-      <img id="worker-image" src="https://via.placeholder.com/300x400?text=Worker" alt="근로자 이미지">
+      <!-- 가운데 직사각형 근로자 이미지 -->
+      <img id="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
       <!-- 오버레이 이미지가 추가될 영역 -->
     </div>
     <div id="gear-grid"></div>
@@ -148,12 +146,12 @@
 
     // 페이지3 게임 로직
     let gearItems = [
-      { id: 1, thumbnail: 'https://via.placeholder.com/100?text=Gear1', overlay: 'https://via.placeholder.com/100?text=Overlay1', correct: true, applied: false },
-      { id: 2, thumbnail: 'https://via.placeholder.com/100?text=Gear2', overlay: 'https://via.placeholder.com/100?text=Overlay2', correct: false, applied: false },
-      { id: 3, thumbnail: 'https://via.placeholder.com/100?text=Gear3', overlay: 'https://via.placeholder.com/100?text=Overlay3', correct: true, applied: false },
-      { id: 4, thumbnail: 'https://via.placeholder.com/100?text=Gear4', overlay: 'https://via.placeholder.com/100?text=Overlay4', correct: false, applied: false },
-      { id: 5, thumbnail: 'https://via.placeholder.com/100?text=Gear5', overlay: 'https://via.placeholder.com/100?text=Overlay5', correct: true, applied: false },
-      { id: 6, thumbnail: 'https://via.placeholder.com/100?text=Gear6', overlay: 'https://via.placeholder.com/100?text=Overlay6', correct: false, applied: false }
+      { id: 1, thumbnail: 'https://i.imgur.com/yvsCOBF.png', overlay: 'https://i.imgur.com/yTJe79p.png', correct: true, applied: false },
+      { id: 2, thumbnail: 'https://i.imgur.com/8gsL65v.png', overlay: 'https://i.imgur.com/zBCjthf.png', correct: true, applied: false },
+      { id: 3, thumbnail: 'https://i.imgur.com/nvoxlp7.png', overlay: 'https://i.imgur.com/VfJMtc3.png', correct: true, applied: false },
+      { id: 4, thumbnail: 'https://i.imgur.com/m1GZRHc.png', overlay: 'https://i.imgur.com/Cphm4b5.png', correct: true, applied: false },
+      { id: 5, thumbnail: 'https://i.imgur.com/d7Plzcn.png', overlay: 'https://i.imgur.com/5VxjKY6.png', correct: true, applied: false },
+      { id: 6, thumbnail: 'https://i.imgur.com/Ui2tbVv.png', overlay: '', correct: false, applied: false }
     ];
 
     // 배열 섞기 함수
@@ -215,6 +213,7 @@
     }
 
     function addOverlayImage(item) {
+      if(!item.overlay) return; // 오버레이 이미지가 없으면 실행하지 않음
       const workerContainer = document.getElementById('worker-container');
       const overlayImg = document.createElement('img');
       overlayImg.src = item.overlay;
