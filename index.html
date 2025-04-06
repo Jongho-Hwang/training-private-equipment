@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>작업별 보호구 착용 옷입히기 게임</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: sans-serif; }
+    .page { display: none; padding: 20px; }
+    .active { display: block; }
+    .center { text-align: center; }
+    /* 페이지1 스타일 */
+    #page1 img { max-width: 100%; height: auto; }
+    /* 페이지2 스타일 */
+    #page2 { text-align: left; }
+    .blink {
+      animation: blink-animation 1s steps(5, start) infinite;
+      color: red;
+    }
+    @keyframes blink-animation {
+      to { visibility: hidden; }
+    }
+    /* 페이지3 스타일 */
+    #worker-container {
+      position: relative;
+      text-align: center;
+    }
+    #worker-image {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+    }
+    #gear-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .gear-item {
+      width: 100%;
+      position: relative;
+    }
+    .gear-item img {
+      width: 100%;
+      display: block;
+      cursor: pointer;
+    }
+    /* 페이지4 스타일 */
+    #certificate-box {
+      border: 2px solid #000;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- 페이지1: 시작 화면 -->
+  <div id="page1" class="page active">
+    <div class="center">
+      <h1>작업별 보호구 착용 교육</h1>
+      <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지">
+      <br>
+      <button class="button" id="startButton">교육 시작하기</button>
+    </div>
+  </div>
+
+  <!-- 페이지2: 교육 정보 입력 -->
+  <div id="page2" class="page">
+    <h2>교육 정보 입력</h2>
+    <label>근로자 이름:</label><br>
+    <input type="text" id="workerName" placeholder="이름 입력"><br><br>
+    <label>소속:</label><br>
+    <input type="text" id="workerAffiliation" placeholder="소속 입력"><br><br>
+    <div class="blink">작업 상황에 따른 보호구 착용 기준을 옷입히기 게임 방식으로 학습합니다. 근로자 캐릭터 우측의 보호구를 클릭하여 올바른 보호구를 착용시켜주세요.</div>
+    <br>
+    <button class="button" id="toPage3">다음</button>
+  </div>
+
+  <!-- 페이지3: 보호구 착용 게임 -->
+  <div id="page3" class="page">
+    <h2>공통 작업 개인보호구 착용</h2>
+    <div id="worker-container" class="center">
+      <img id="worker-image" src="https://via.placeholder.com/300x400?text=Worker" alt="근로자 이미지">
+      <!-- 오버레이 이미지가 추가될 영역 -->
+    </div>
+    <div id="gear-grid"></div>
+    <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
+    <div class="center">
+      <button class="button" id="toPage4" disabled>다음</button>
+    </div>
+  </div>
+
+  <!-- 페이지4: 수료증 화면 -->
+  <div id="page4" class="page">
+    <h2>수료증</h2>
+    <div id="certificate-box">
+      <p id="cert-workerName"></p>
+      <p id="cert-workerAffiliation"></p>
+      <p>보호구 교육을 모두 수료하셨습니다.</p>
+    </div>
+    <div style="text-align: center;">
+      <p>관리자에게 수료증 화면을 보여주세요</p>
+      <button class="button" id="saveCert">저장하기</button>
+      <button class="button" id="homeButton">홈으로</button>
+    </div>
+  </div>
+
+  <!-- html2canvas (수료증 캡쳐용) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    // 페이지 전환 관련 이벤트
+    document.getElementById('startButton').addEventListener('click', function() {
+      showPage('page2');
+    });
+
+    document.getElementById('toPage3').addEventListener('click', function() {
+      // 이름과 소속이 입력되었는지 체크
+      if(document.getElementById('workerName').value.trim() === '' || document.getElementById('workerAffiliation').value.trim() === '') {
+        alert('근로자 이름과 소속을 입력해주세요.');
+        return;
+      }
+      showPage('page3');
+      initializeGame();
+    });
+
+    document.getElementById('toPage4').addEventListener('click', function() {
+      // 수료증에 페이지2 입력 내용 반영
+      document.getElementById('cert-workerName').innerText = "근로자 이름: " + document.getElementById('workerName').value;
+      document.getElementById('cert-workerAffiliation').innerText = "소속: " + document.getElementById('workerAffiliation').value;
+      showPage('page4');
+    });
+
+    document.getElementById('homeButton').addEventListener('click', function() {
+      location.reload();
+    });
+
+    // 지정한 페이지만 표시
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(function(page) {
+        page.classList.remove('active');
+      });
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    // 페이지3 게임 로직
+    let gearItems = [
+      { id: 1, thumbnail: 'https://via.placeholder.com/100?text=Gear1', overlay: 'https://via.placeholder.com/100?text=Overlay1', correct: true, applied: false },
+      { id: 2, thumbnail: 'https://via.placeholder.com/100?text=Gear2', overlay: 'https://via.placeholder.com/100?text=Overlay2', correct: false, applied: false },
+      { id: 3, thumbnail: 'https://via.placeholder.com/100?text=Gear3', overlay: 'https://via.placeholder.com/100?text=Overlay3', correct: true, applied: false },
+      { id: 4, thumbnail: 'https://via.placeholder.com/100?text=Gear4', overlay: 'https://via.placeholder.com/100?text=Overlay4', correct: false, applied: false },
+      { id: 5, thumbnail: 'https://via.placeholder.com/100?text=Gear5', overlay: 'https://via.placeholder.com/100?text=Overlay5', correct: true, applied: false },
+      { id: 6, thumbnail: 'https://via.placeholder.com/100?text=Gear6', overlay: 'https://via.placeholder.com/100?text=Overlay6', correct: false, applied: false }
+    ];
+
+    // 배열 섞기 함수
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function initializeGame() {
+      // 게임 초기화: gearItems 초기 상태 및 셔플
+      gearItems.forEach(item => item.applied = false);
+      const shuffledItems = shuffle([...gearItems]);
+      const gearGrid = document.getElementById('gear-grid');
+      gearGrid.innerHTML = '';
+      shuffledItems.forEach(item => {
+        const gearDiv = document.createElement('div');
+        gearDiv.className = 'gear-item';
+        const img = document.createElement('img');
+        img.src = item.thumbnail;
+        img.dataset.id = item.id;
+        img.addEventListener('click', function() {
+          handleGearClick(item, img);
+        });
+        gearDiv.appendChild(img);
+        gearGrid.appendChild(gearDiv);
+      });
+      // 워커 이미지 오버레이 초기화
+      const workerContainer = document.getElementById('worker-container');
+      workerContainer.querySelectorAll('.overlay').forEach(overlay => overlay.remove());
+      // 다음 버튼 비활성화
+      document.getElementById('toPage4').disabled = true;
+      document.getElementById('error-message').innerText = '';
+    }
+
+    function handleGearClick(item, imgElement) {
+      if(item.correct) {
+        if(!item.applied) {
+          // 정답 아이템 적용: 불투명도 50% 및 오버레이 이미지 추가
+          imgElement.style.opacity = 0.5;
+          item.applied = true;
+          addOverlayImage(item);
+        } else {
+          // 적용 해제: 불투명도 복원 및 오버레이 제거
+          imgElement.style.opacity = 1;
+          item.applied = false;
+          removeOverlayImage(item);
+        }
+      } else {
+        // 오답 클릭 시 에러 메시지 표시
+        document.getElementById('error-message').innerText = '올바르지 않은 보호구가 아닙니다.';
+        setTimeout(() => {
+          document.getElementById('error-message').innerText = '';
+        }, 2000);
+      }
+      checkAllCorrectApplied();
+    }
+
+    function addOverlayImage(item) {
+      const workerContainer = document.getElementById('worker-container');
+      const overlayImg = document.createElement('img');
+      overlayImg.src = item.overlay;
+      overlayImg.className = 'overlay';
+      // 워커 컨테이너 내 무작위 위치 (예: 오른쪽 절반)
+      const containerWidth = workerContainer.clientWidth;
+      const containerHeight = workerContainer.clientHeight;
+      const randomLeft = Math.random() * (containerWidth / 2) + containerWidth / 2;
+      const randomTop = Math.random() * (containerHeight - 50);
+      overlayImg.style.position = 'absolute';
+      overlayImg.style.left = randomLeft + 'px';
+      overlayImg.style.top = randomTop + 'px';
+      overlayImg.style.width = '50px';
+      overlayImg.style.height = '50px';
+      overlayImg.dataset.id = item.id;
+      workerContainer.appendChild(overlayImg);
+    }
+
+    function removeOverlayImage(item) {
+      const workerContainer = document.getElementById('worker-container');
+      const overlay = workerContainer.querySelector('img.overlay[data-id="'+item.id+'"]');
+      if(overlay) overlay.remove();
+    }
+
+    function checkAllCorrectApplied() {
+      // 모든 정답 아이템이 적용되었는지 체크
+      const allApplied = gearItems.filter(item => item.correct).every(item => item.applied);
+      document.getElementById('toPage4').disabled = !allApplied;
+    }
+
+    // 수료증 저장: html2canvas로 캡쳐 후 다운로드
+    document.getElementById('saveCert').addEventListener('click', function() {
+      const certificateBox = document.getElementById('certificate-box');
+      html2canvas(certificateBox).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'certificate.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+  </script>
+</body>
+</html>
