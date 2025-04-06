@@ -9,6 +9,11 @@
     .page { display: none; padding: 20px; }
     .active { display: block; }
     .center { text-align: center; }
+    /* 얇은 검정색 둥근 테두리 (애플 아이콘 스타일) */
+    .rounded-border {
+      border: 1px solid black;
+      border-radius: 10px;
+    }
     /* 페이지1 스타일 */
     #page1 img { max-width: 100%; height: auto; }
     /* 페이지2 스타일 */
@@ -19,11 +24,13 @@
       position: relative;
       text-align: center;
     }
+    /* 근로자 이미지는 둥근 테두리 적용 */
     #worker-image {
       width: 100%;
       max-width: 300px;
       height: auto;
     }
+    /* 보호구 그리드 */
     #gear-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -34,10 +41,12 @@
       width: 100%;
       position: relative;
     }
+    /* 보호구 썸네일 이미지는 80% 크기로, 중앙정렬 및 둥근 테두리 적용 */
     .gear-item img {
-      width: 100%;
+      width: 80%;
       display: block;
       cursor: pointer;
+      margin: 0 auto;
     }
     /* 페이지4 스타일 */
     #certificate-box {
@@ -65,9 +74,9 @@
     </div>
   </div>
 
-  <!-- 페이지2: 교육 정보 입력 -->
+  <!-- 페이지2: 근로자 정보 입력 -->
   <div id="page2" class="page">
-    <h2>교육 정보 입력</h2>
+    <h2>근로자 정보 입력</h2>
     <label>근로자 이름:</label><br>
     <input type="text" id="workerName" placeholder="이름 입력"><br><br>
     <label>소속:</label><br>
@@ -81,9 +90,9 @@
   <div id="page3" class="page">
     <h2>공통 작업 개인보호구 착용</h2>
     <div id="worker-container" class="center">
-      <!-- 가운데 직사각형 근로자 이미지 -->
-      <img id="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
-      <!-- 오버레이 이미지가 추가될 영역 -->
+      <!-- 가운데 직사각형 근로자 이미지 (둥근 테두리 적용) -->
+      <img id="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지" class="rounded-border">
+      <!-- 보호구 오버레이 이미지가 추가될 영역 (근로자 이미지와 동일한 위치/크기로 오버레이됨) -->
     </div>
     <div id="gear-grid"></div>
     <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
@@ -174,6 +183,8 @@
         gearDiv.className = 'gear-item';
         const img = document.createElement('img');
         img.src = item.thumbnail;
+        // 보호구 썸네일에 둥근 테두리 적용 (80% 크기는 CSS에서 적용됨)
+        img.classList.add('rounded-border');
         img.dataset.id = item.id;
         img.addEventListener('click', function() {
           handleGearClick(item, img);
@@ -181,7 +192,7 @@
         gearDiv.appendChild(img);
         gearGrid.appendChild(gearDiv);
       });
-      // 워커 이미지 오버레이 초기화
+      // 워커 컨테이너 내 기존 오버레이 제거
       const workerContainer = document.getElementById('worker-container');
       workerContainer.querySelectorAll('.overlay').forEach(overlay => overlay.remove());
       // 다음 버튼 비활성화
@@ -192,7 +203,7 @@
     function handleGearClick(item, imgElement) {
       if(item.correct) {
         if(!item.applied) {
-          // 정답 아이템 적용: 불투명도 50% 및 오버레이 이미지 추가
+          // 정답 아이템 적용: 썸네일 불투명도 변경 및 오버레이 추가
           imgElement.style.opacity = 0.5;
           item.applied = true;
           addOverlayImage(item);
@@ -204,7 +215,7 @@
         }
       } else {
         // 오답 클릭 시 에러 메시지 표시
-        document.getElementById('error-message').innerText = '올바르지 않은 보호구가 아닙니다.';
+        document.getElementById('error-message').innerText = '올바른 보호구가 아닙니다.';
         setTimeout(() => {
           document.getElementById('error-message').innerText = '';
         }, 2000);
@@ -218,17 +229,14 @@
       const overlayImg = document.createElement('img');
       overlayImg.src = item.overlay;
       overlayImg.className = 'overlay';
-      // 워커 컨테이너 내 무작위 위치 (예: 오른쪽 절반)
-      const containerWidth = workerContainer.clientWidth;
-      const containerHeight = workerContainer.clientHeight;
-      const randomLeft = Math.random() * (containerWidth / 2) + containerWidth / 2;
-      const randomTop = Math.random() * (containerHeight - 50);
+      // 근로자 이미지와 동일한 위치와 크기로 오버레이 (같은 배율)
       overlayImg.style.position = 'absolute';
-      overlayImg.style.left = randomLeft + 'px';
-      overlayImg.style.top = randomTop + 'px';
-      overlayImg.style.width = '50px';
-      overlayImg.style.height = '50px';
-      overlayImg.dataset.id = item.id;
+      overlayImg.style.top = '0';
+      overlayImg.style.left = '0';
+      overlayImg.style.width = '100%';
+      overlayImg.style.height = '100%';
+      // 보호구 오버레이에도 둥근 테두리 적용 (필요시)
+      overlayImg.classList.add('rounded-border');
       workerContainer.appendChild(overlayImg);
     }
 
