@@ -160,7 +160,7 @@
 
   <!-- 기회 표시 (페이지 3-7에서만 표시) -->
   <div id="chances-display" class="chances-display" style="display: none;">
-    남은 기회: <span id="remaining-chances">∞</span>
+    클릭 기회: <span id="remaining-chances">∞</span>
   </div>
 
   <!-- 페이지1: 시작 화면 -->
@@ -418,15 +418,15 @@
 
     // 기회 차감
     function decreaseChances() {
-      if (remainingChances !== Infinity) {
+      if (remainingChances !== Infinity && remainingChances > 0) {
         remainingChances--;
         updateChances();
         
-        console.log(`기회 차감: ${remainingChances} 남음`); // 디버그용
+        console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`); // 디버그용
         
         if (remainingChances <= 0) {
           // 기회 소진 시 게임 종료
-          console.log('기회 소진으로 게임 종료'); // 디버그용
+          console.log('💀 기회 소진으로 게임 종료'); // 디버그용
           setTimeout(() => {
             alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
             goToPage8();
@@ -441,12 +441,14 @@
     function setChancesForCycle() {
       if (cycleCount === 1) {
         remainingChances = Infinity;
+        console.log(`🟢 사이클 ${cycleCount}: 무제한 기회 설정`); // 디버그용
       } else if (cycleCount === 2) {
         remainingChances = maxChancesPerCycle[2];
+        console.log(`🟡 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
       } else {
         remainingChances = maxChancesPerCycle.default;
+        console.log(`🔴 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
       }
-      console.log(`사이클 ${cycleCount}: 기회 ${remainingChances}로 설정`); // 디버그용
       updateChances();
     }
 
@@ -463,15 +465,15 @@
         return;
       }
       
-      // 게임 초기화
+      // 게임 완전 초기화
       currentScore = 0;
       currentSequenceIndex = 0;
       hasCompletedFirstCycle = false;
       isInRandomCycle = false;
       gameSequence = [3, 4, 5, 6, 7];
-      cycleCount = 1; // 첫 번째 사이클로 초기화
+      cycleCount = 1; // 첫 번째 사이클로 명시적 초기화
       
-      console.log('게임 시작 - 첫 번째 사이클'); // 디버그용
+      console.log('🎮 게임 시작 - 첫 번째 사이클 (무제한 기회)'); // 디버그용
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -482,7 +484,7 @@
       }
       
       document.getElementById('current-score').textContent = currentScore;
-      setChancesForCycle(); // 첫 사이클 기회 설정
+      setChancesForCycle(); // 첫 사이클 기회 설정 (무제한)
       showScore();
       showChances();
       showPage('page3');
@@ -576,6 +578,8 @@
     function startNewRandomCycle() {
       // 사이클 카운트 증가
       cycleCount++;
+      console.log(`🔄 새로운 사이클 시작: ${cycleCount}`); // 디버그용
+      
       isInRandomCycle = true;
       gameSequence = shuffle([3, 4, 5, 6, 7]);
       currentSequenceIndex = 0;
@@ -583,7 +587,7 @@
       // 새 사이클 기회 설정
       setChancesForCycle();
       
-      console.log(`사이클 ${cycleCount} 시작, 기회: ${remainingChances}`); // 디버그용
+      console.log(`📊 사이클 ${cycleCount} - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`); // 디버그용
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -636,14 +640,14 @@
         img.classList.add('rounded-border');
         img.dataset.id = item.id;
         
-        // 클릭 활성화 (기회가 0이 아닌 경우에만)
-        if (remainingChances !== 0) {
-          img.style.pointerEvents = 'auto';
-          img.style.opacity = '1';
-          img.addEventListener('click', function() {
-            handleGearClick(item, img, pageNum);
-          });
-        }
+        // 클릭 항상 활성화 (기회가 있는 경우에만)
+        img.style.pointerEvents = 'auto';
+        img.style.opacity = '1';
+        img.style.cursor = 'pointer';
+        
+        img.addEventListener('click', function() {
+          handleGearClick(item, img, pageNum);
+        });
         
         gearDiv.appendChild(img);
         gearGrid.appendChild(gearDiv);
@@ -658,6 +662,8 @@
       if (nextButton) nextButton.disabled = true;
       
       document.getElementById(`error-message-${pageNum}`).innerText = '';
+      
+      console.log(`🎯 페이지 ${pageNum} 초기화 완료 (사이클 ${cycleCount}, 기회: ${remainingChances})`); // 디버그용
     }
 
     function handleGearClick(item, imgElement, pageNum) {
