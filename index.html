@@ -6,29 +6,28 @@
   <title>작업별 보호구 착용 옷입히기 게임</title>
   <style>
     /* === 기본 세팅 === */
+    *{box-sizing:border-box}
     body{margin:0;padding:0;font-family:sans-serif}
-    /* 모든 페이지는 기본적으로 안 보인다 */
-    .page{display:none;width:100%;box-sizing:border-box;padding:20px}
-    /* 현재 활성 페이지만 block 또는 flex 로 표시 */
+
+    /* 페이지 기본·활성 표시 */
+    .page{display:none;width:100%;padding:20px}
     .page.active{display:block}
     .flex-page.active{display:flex;justify-content:center;align-items:center;min-height:100vh}
 
-    .center{text-align:center}
-
-    /* === 공통 카드 === */
+    /* 공통 카드 */
     .card{
       background:#fff;border-radius:20px;
       box-shadow:0 15px 25px rgba(0,0,0,.1);
-      padding:40px 30px;width:100%;max-width:600px;
-      margin:0 auto;box-sizing:border-box
+      padding:40px;
+      width:100%;max-width:600px;margin:0 auto
     }
 
-    /* === 페이지별 배경 === */
+    /* 배경 */
     #page1{background:linear-gradient(135deg,#7b5dff 0%,#4a8dff 100%)}
     #page2{background:radial-gradient(circle at top left,#f3f3f5 0%,#e9e9eb 100%)}
     #page8{background:linear-gradient(135deg,#b6f0e8 0%,#d3ecf6 50%,#ffd6e6 100%)}
 
-    /* === 버튼 === */
+    /* 버튼 */
     .button{
       padding:12px 24px;margin:10px;font-size:16px;
       cursor:pointer;color:#fff;border:none;border-radius:8px;
@@ -37,22 +36,34 @@
       transition:transform .1s
     }
     .button:hover{transform:translateY(-2px)}
+    .restart-button{
+      background:linear-gradient(135deg,#6a63ff 0%,#4e45d5 100%);
+      color:#fff;border:none;padding:10px 20px;margin:10px;font-size:16px;
+      cursor:pointer;border-radius:8px;transition:transform .1s}
+    .restart-button:hover{transform:translateY(-2px)}
 
-    /* 얇은 둥근 테두리 */
+    /* 둥근 테두리 */
     .rounded-border{border:1px solid #000;border-radius:10px}
 
-    /* 페이지1 내 이미지 및 문구 한 줄 처리 */
-    #page1 h1{white-space:nowrap;margin-top:0}
-    #page1 img{max-width:100%;height:auto}
+    /* ===== 페이지 1 ===== */
+    #page1 .card{display:flex;flex-direction:column;align-items:center;text-align:center}
+    #page1 h1{margin:0 0 24px 0;word-break:keep-all}  /* 좌·우 여백 균형 */
 
-    /* 페이지2 */
-    .blink{color:red}
+    /* ===== 페이지 2 ===== */
+    #page2 .card{text-align:left}
+    #page2 .card h2{text-align:center;margin-top:0}
+    .form-group{margin-bottom:20px}
+    .form-group label{display:block;margin-bottom:6px;font-weight:600}
+    .form-group input{
+      width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;
+      font-size:16px
+    }
+    .blink{color:red;padding:16px;border:1px solid #ffb6b6;background:#ffecec;border-radius:6px}
 
-    /* 페이지3-7 공통 */
+    /* ===== 페이지 3~7 ===== */
     .worker-container{position:relative;width:100%;text-align:center}
     .worker-image{width:100%;height:auto;display:block;margin:0 auto}
     .gear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
-    .gear-item{width:100%;position:relative}
     .gear-item img{width:80%;display:block;cursor:pointer;margin:0 auto}
 
     /* 점수·기회 표시 */
@@ -65,26 +76,16 @@
     .cycle-2{background:#fff3e0!important;border:2px solid #ff9800!important;color:#e65100!important}
     .cycle-3-plus{background:#ffebee!important;border:2px solid #f44336!important;color:#d32f2f!important}
 
-    /* 수료증 */
+    /* ===== 페이지 8 ===== */
     #certificate-box{
       border:2px solid #000;padding:20px;margin:20px 0;text-align:center;
-      border-radius:12px;box-sizing:border-box
+      border-radius:12px
     }
-
-    /* 랭킹 테이블 */
     .ranking-table{margin:30px auto 0;border-collapse:collapse;width:100%;max-width:600px}
     .ranking-table th,.ranking-table td{border:1px solid #ddd;padding:8px;text-align:center}
     .ranking-table th{background:#f2f2f2;font-weight:700}
     .ranking-table tr:nth-child(even){background:#f9f9f9}
     .loading{text-align:center;color:#666;font-style:italic}
-
-    /* 기타 버튼 */
-    .button-group{margin-top:20px}
-    .restart-button{
-      background:linear-gradient(135deg,#6a63ff 0%,#4e45d5 100%);
-      color:#fff;border:none;padding:10px 20px;margin:10px;font-size:16px;
-      cursor:pointer;border-radius:8px;transition:transform .1s}
-    .restart-button:hover{transform:translateY(-2px)}
   </style>
 </head>
 <body>
@@ -94,9 +95,9 @@
 
   <!-- 페이지 1 -->
   <div id="page1" class="page flex-page active">
-    <div class="card center">
+    <div class="card">
       <h1>작업별 보호구 착용 교육</h1>
-      <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지"><br>
+      <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지">
       <button class="button" id="startButton">교육 시작하기</button>
     </div>
   </div>
@@ -104,17 +105,23 @@
   <!-- 페이지 2 -->
   <div id="page2" class="page flex-page">
     <div class="card">
-      <h2 class="center">교육 정보 입력</h2>
-      <label>현장명:</label><br>
-      <input id="siteName" placeholder="현장명 입력" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:6px"><br><br>
-      <label>근로자 이름:</label><br>
-      <input id="workerName" placeholder="이름 입력" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:6px"><br><br>
-      <label>소속:</label><br>
-      <input id="workerAffiliation" placeholder="소속 입력" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:6px"><br><br>
-      <div class="blink" style="padding:16px;border:1px solid #ffb6b6;background:#ffecec;border-radius:6px">
+      <h2 class="center">기본 정보 입력</h2>
+      <div class="form-group">
+        <label for="siteName">현장명</label>
+        <input id="siteName" placeholder="현장명 입력">
+      </div>
+      <div class="form-group">
+        <label for="workerName">근로자 이름</label>
+        <input id="workerName" placeholder="이름 입력">
+      </div>
+      <div class="form-group">
+        <label for="workerAffiliation">소속</label>
+        <input id="workerAffiliation" placeholder="소속 입력">
+      </div>
+      <div class="blink">
         작업 상황에 따른 보호구 착용 기준을 옷입히기 게임 방식으로 학습합니다.<br>
         근로자 캐릭터 하단의 보호구를 클릭하여 올바른 보호구를 착용시켜주세요.
-      </div><br>
+      </div>
       <button class="button" id="toPage3" style="width:100%">다음</button>
     </div>
   </div>
@@ -194,12 +201,9 @@
         <p id="cert-workerAffiliation"></p>
         <p>보호구 교육을 모두 수료하셨습니다.</p>
       </div>
-      <!-- 점수는 사용자에게만 표시하고 저장 이미지에서는 제외 -->
       <p id="final-score-display" style="margin-top:20px">최종 점수: <span id="final-score">0</span>점</p>
-
       <button class="button" id="saveCert">저장하기</button>
       <button class="button" id="homeButton">홈으로</button>
-
       <h3>🏆 이번 주 랭킹</h3>
       <div id="ranking-loading" class="loading">랭킹을 불러오는 중...</div>
       <table id="ranking-table" class="ranking-table" style="display:none">
@@ -224,7 +228,7 @@
        기존 JS 로직 그대로 — 한 글자도 빠짐없이 포함
     ------------------------------------------------------------------ */
 
-    // Firebase 설정 - 실제 프로젝트 설정 적용됨
+    // Firebase 설정
     const firebaseConfig = {
       apiKey: "AIzaSyDqZFIp_jzaUFiNlZxO3AYI3b8H9zDgyW4",
       authDomain: "training-private-equipment.firebaseapp.com",
@@ -234,286 +238,62 @@
       appId: "1:428074253490:web:77d4040f8af17338795dab"
     };
 
-    // Firebase 초기화 (설정이 없으면 로컬 스토리지 사용)
-    let db = null;
-    try {
-      if (firebaseConfig.apiKey !== "your-api-key") {
+    let db=null;
+    try{
+      if(firebaseConfig.apiKey!=="your-api-key"){
         firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
+        db=firebase.firestore();
       }
-    } catch (error) {
-      console.log("Firebase 설정이 없어 로컬 스토리지를 사용합니다.");
-    }
+    }catch(e){console.log("Firebase 설정이 없어 로컬 스토리지를 사용합니다.");}
 
-    // 각 페이지별 보호구 데이터
-    const pageGearData = {
-      3: [
-        { id: 1, thumbnail: 'https://i.imgur.com/yvsCOBF.png', overlay: 'https://i.imgur.com/yTJe79p.png', correct: true, applied: false, zIndex: 1 },
-        { id: 2, thumbnail: 'https://i.imgur.com/8gsL65v.png', overlay: 'https://i.imgur.com/zBCjthf.png', correct: true, applied: false, zIndex: 2 },
-        { id: 3, thumbnail: 'https://i.imgur.com/nvoxlp7.png', overlay: 'https://i.imgur.com/VfJMtc3.png', correct: true, applied: false, zIndex: 3 },
-        { id: 4, thumbnail: 'https://i.imgur.com/m1GZRHc.png', overlay: 'https://i.imgur.com/Cphm4b5.png', correct: true, applied: false, zIndex: 4 },
-        { id: 5, thumbnail: 'https://i.imgur.com/d7Plzcn.png', overlay: 'https://i.imgur.com/5VxjKY6.png', correct: true, applied: false, zIndex: 5 },
-        { id: 6, thumbnail: 'https://i.imgur.com/Ui2tbVv.png', overlay: '', correct: false, applied: false, zIndex: 6 }
-      ],
-      4: [
-        { id: 1, thumbnail: 'https://imgur.com/n6iJRus.png', overlay: '', correct: false, applied: false, zIndex: 1 },
-        { id: 2, thumbnail: 'https://i.imgur.com/oU1hjTk.png', overlay: 'https://i.imgur.com/cPHvWTb.png', correct: true, applied: false, zIndex: 2 },
-        { id: 3, thumbnail: 'https://i.imgur.com/Ui2tbVv.png', overlay: 'https://i.imgur.com/S77YoN3.png', correct: true, applied: false, zIndex: 4 },
-        { id: 4, thumbnail: 'https://i.imgur.com/Cbcyknu.png', overlay: 'https://i.imgur.com/v5kUQPg.png', correct: true, applied: false, zIndex: 3 },
-        { id: 5, thumbnail: 'https://i.imgur.com/nvoxlp7.png', overlay: '', correct: false, applied: false, zIndex: 5 },
-        { id: 6, thumbnail: 'https://i.imgur.com/fdH4wzC.png', overlay: '', correct: false, applied: false, zIndex: 6 }
-      ],
-      5: [
-        { id: 1, thumbnail: 'https://i.imgur.com/NnWSEdz.png', overlay: 'https://i.imgur.com/ImnVVaf.png', correct: true, applied: false, zIndex: 1 },
-        { id: 2, thumbnail: 'https://i.imgur.com/NdbXUPl.png', overlay: 'https://i.imgur.com/IMelM9Q.png', correct: true, applied: false, zIndex: 2 },
-        { id: 3, thumbnail: 'https://i.imgur.com/Z5ojhhi.png', overlay: 'https://i.imgur.com/3KX2VD4.png', correct: true, applied: false, zIndex: 3 },
-        { id: 4, thumbnail: 'https://i.imgur.com/Ui2tbVv.png', overlay: '', correct: false, applied: false, zIndex: 4 },
-        { id: 5, thumbnail: 'https://i.imgur.com/Cbcyknu.png', overlay: '', correct: false, applied: false, zIndex: 5 },
-        { id: 6, thumbnail: 'https://i.imgur.com/fdH4wzC.png', overlay: '', correct: false, applied: false, zIndex: 6 }
-      ],
-      6: [
-        { id: 1, thumbnail: 'https://i.imgur.com/fdH4wzC.png', overlay: 'https://i.imgur.com/fdH4wzC.png', correct: true, applied: false, zIndex: 1 },
-        { id: 2, thumbnail: 'https://i.imgur.com/yvsCOBF.png', overlay: 'https://i.imgur.com/yTJe79p.png', correct: true, applied: false, zIndex: 2 },
-        { id: 3, thumbnail: 'https://i.imgur.com/F1PF0tE.png', overlay: 'https://i.imgur.com/Gctejg5.png', correct: true, applied: false, zIndex: 3 },
-        { id: 4, thumbnail: 'https://i.imgur.com/n6iJRus.png', overlay: 'https://i.imgur.com/oAQe9gI.png', correct: true, applied: false, zIndex: 4 },
-        { id: 5, thumbnail: 'https://i.imgur.com/d7Plzcn.png', overlay: 'https://i.imgur.com/5VxjKY6.png', correct: true, applied: false, zIndex: 5 },
-        { id: 6, thumbnail: 'https://i.imgur.com/NdbXUPl.png', overlay: '', correct: false, applied: false, zIndex: 6 }
-      ],
-      7: [
-        { id: 1, thumbnail: 'https://i.imgur.com/yvsCOBF.png', overlay: 'https://i.imgur.com/yTJe79p.png', correct: true, applied: false, zIndex: 1 },
-        { id: 2, thumbnail: 'https://i.imgur.com/nvoxlp7.png', overlay: 'https://i.imgur.com/VfJMtc3.png', correct: true, applied: false, zIndex: 2 },
-        { id: 3, thumbnail: 'https://i.imgur.com/d7Plzcn.png', overlay: 'https://i.imgur.com/5VxjKY6.png', correct: true, applied: false, zIndex: 3 },
-        { id: 4, thumbnail: 'https://i.imgur.com/m1GZRHc.png', overlay: 'https://i.imgur.com/Cphm4b5.png', correct: true, applied: false, zIndex: 4 },
-        { id: 5, thumbnail: 'https://i.imgur.com/Cbcyknu.png', overlay: '', correct: false, applied: false, zIndex: 5 },
-        { id: 6, thumbnail: 'https://i.imgur.com/Ui2tbVv.png', overlay: '', correct: false, applied: false, zIndex: 6 }
-      ]
-    };
+    /* ----- 보호구 데이터 · 상태 변수 등 (동일) ----- */
+    const pageGearData={3:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:!0,applied:!1,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/8gsL65v.png",overlay:"https://i.imgur.com/zBCjthf.png",correct:!0,applied:!1,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:!0,applied:!1,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:!0,applied:!1,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:!0,applied:!1,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:!1,applied:!1,zIndex:6}],4:[{id:1,thumbnail:"https://imgur.com/n6iJRus.png",overlay:"",correct:!1,applied:!1,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/oU1hjTk.png",overlay:"https://i.imgur.com/cPHvWTb.png",correct:!0,applied:!1,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"https://i.imgur.com/S77YoN3.png",correct:!0,applied:!1,zIndex:4},{id:4,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"https://i.imgur.com/v5kUQPg.png",correct:!0,applied:!1,zIndex:3},{id:5,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"",correct:!1,applied:!1,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:!1,applied:!1,zIndex:6}],5:[{id:1,thumbnail:"https://i.imgur.com/NnWSEdz.png",overlay:"https://i.imgur.com/ImnVVaf.png",correct:!0,applied:!1,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"https://i.imgur.com/IMelM9Q.png",correct:!0,applied:!1,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Z5ojhhi.png",overlay:"https://i.imgur.com/3KX2VD4.png",correct:!0,applied:!1,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:!1,applied:!1,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:!1,applied:!1,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:!1,applied:!1,zIndex:6}],6:[{id:1,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"https://i.imgur.com/fdH4wzC.png",correct:!0,applied:!1,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:!0,applied:!1,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/F1PF0tE.png",overlay:"https://i.imgur.com/Gctejg5.png",correct:!0,applied:!1,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/n6iJRus.png",overlay:"https://i.imgur.com/oAQe9gI.png",correct:!0,applied:!1,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:!0,applied:!1,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"",correct:!1,applied:!1,zIndex:6}],7:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:!0,applied:!1,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:!0,applied:!1,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:!0,applied:!1,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:!0,applied:!1,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:!1,applied:!1,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:!1,applied:!1,zIndex:6}]};
 
-    // 게임 상태 변수
-    let currentScore = 0;
-    let gameSequence = [3, 4, 5, 6, 7]; // 기본 페이지 순서
-    let currentSequenceIndex = 0;
-    let hasCompletedFirstCycle = false;
-    let isInRandomCycle = false;
-    let cycleCount = 1; // 현재 사이클 횟수
-    let remainingChances = Infinity; // 남은 기회
-    let maxChancesPerCycle = {
-      1: Infinity, // 첫 번째 사이클: 무제한
-      2: 10,       // 두 번째 사이클: 10번
-      default: 5   // 세 번째 사이클 이후: 5번
-    };
+    let currentScore=0,currentSequenceIndex=0,cycleCount=1,remainingChances=Infinity,hasCompletedFirstCycle=!1,isInRandomCycle=!1,gameSequence=[3,4,5,6,7],maxChancesPerCycle={1:Infinity,2:10,default:5};
 
-    /* ==== 점수 / 기회 함수 ==== */
-    function updateScore(){currentScore++;document.getElementById('current-score').textContent=currentScore;}
-    function showScore(){document.getElementById('score-display').style.display='block'}
-    function hideScore(){document.getElementById('score-display').style.display='none'}
+    /* ---- 점수·기회 표시 함수 (동일) ---- */
+    function updateScore(){currentScore++;document.getElementById("current-score").textContent=currentScore}
+    function showScore(){document.getElementById("score-display").style.display="block"}
+    function hideScore(){document.getElementById("score-display").style.display="none"}
+    function updateChances(){const e=document.getElementById("remaining-chances"),t=document.getElementById("chances-display");t.classList.remove("cycle-1","cycle-2","cycle-3-plus"),remainingChances===Infinity?(e.textContent="∞",t.classList.add("cycle-1")):2===cycleCount?(e.textContent=Math.max(0,remainingChances),t.classList.add("cycle-2")):(e.textContent=Math.max(0,remainingChances),t.classList.add("cycle-3-plus"))}
+    function showChances(){document.getElementById("chances-display").style.display="block",updateChances()}
+    function hideChances(){document.getElementById("chances-display").style.display="none"}
+    function decreaseChances(){if(remainingChances!==Infinity&&(remainingChances--,updateChances(),remainingChances<0))return setTimeout(()=>{alert(`💀모든 보호구를 착용하지 못했습니다💀\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`),goToPage8()},500),!0;return!1}
+    function setChancesForCycle(){remainingChances=1===cycleCount?Infinity:2===cycleCount?maxChancesPerCycle[2]:maxChancesPerCycle.default,updateChances()}
 
-    function updateChances(){
-      const el=document.getElementById('remaining-chances');
-      const box=document.getElementById('chances-display');
-      box.classList.remove('cycle-1','cycle-2','cycle-3-plus');
-      if(remainingChances===Infinity){el.textContent='∞';box.classList.add('cycle-1')}
-      else if(cycleCount===2){el.textContent=Math.max(0,remainingChances);box.classList.add('cycle-2')}
-      else{el.textContent=Math.max(0,remainingChances);box.classList.add('cycle-3-plus')}
-    }
-    function showChances(){document.getElementById('chances-display').style.display='block';updateChances();}
-    function hideChances(){document.getElementById('chances-display').style.display='none'}
-
-    function decreaseChances(){
-      if(remainingChances!==Infinity){
-        remainingChances--;updateChances();
-        if(remainingChances<0){
-          setTimeout(()=>{
-            alert(`💀모든 보호구를 착용하지 못했습니다💀\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
-            goToPage8();
-          },500);return true;
-        }
-      }return false;
-    }
-    function setChancesForCycle(){
-      if(cycleCount===1)remainingChances=Infinity;
-      else if(cycleCount===2)remainingChances=maxChancesPerCycle[2];
-      else remainingChances=maxChancesPerCycle.default;
-      updateChances();
-    }
-
-    /* ==== 페이지 전환 이벤트 ==== */
-    document.getElementById('startButton').addEventListener('click',()=>showPage('page2'));
-
-    document.getElementById('toPage3').addEventListener('click',function(){
-      if(!document.getElementById('siteName').value.trim()||
-         !document.getElementById('workerName').value.trim()||
-         !document.getElementById('workerAffiliation').value.trim()){
-        alert('현장명, 근로자 이름, 소속을 모두 입력해주세요.');return;
-      }
-      currentScore=0;currentSequenceIndex=0;hasCompletedFirstCycle=false;
-      isInRandomCycle=false;gameSequence=[3,4,5,6,7];cycleCount=1;
-      for(let i=3;i<=7;i++){
-        const c=document.getElementById(`button-container-${i}`);
-        if(c)c.innerHTML=`<button class="button" id="next-button-${i}" disabled>다음</button>`;
-      }
-      document.getElementById('current-score').textContent=currentScore;
-      setChancesForCycle();showScore();showChances();showPage('page3');initializeGame(3);bindNextButtonEvents();
+    /* ---- 페이지 이동 ---- */
+    document.getElementById("startButton").addEventListener("click",()=>showPage("page2"));
+    document.getElementById("toPage3").addEventListener("click",function(){
+      if(!document.getElementById("siteName").value.trim()||!document.getElementById("workerName").value.trim()||!document.getElementById("workerAffiliation").value.trim())return alert("현장명, 근로자 이름, 소속을 모두 입력해주세요.");
+      currentScore=0,currentSequenceIndex=0,hasCompletedFirstCycle=!1,isInRandomCycle=!1,gameSequence=[3,4,5,6,7],cycleCount=1;
+      for(let e=3;e<=7;e++){const t=document.getElementById(`button-container-${e}`);t&&(t.innerHTML=`<button class="button" id="next-button-${e}" disabled>다음</button>`)}
+      document.getElementById("current-score").textContent=currentScore,setChancesForCycle(),showScore(),showChances(),showPage("page3"),initializeGame(3),bindNextButtonEvents()
     });
 
-    function bindNextButtonEvents(){
-      document.querySelectorAll('[id^="next-button-"]').forEach(btn=>btn.replaceWith(btn.cloneNode(true)));
-      document.getElementById('next-button-3').addEventListener('click',()=>goToNextPage());
-      document.getElementById('next-button-4').addEventListener('click',()=>goToNextPage());
-      document.getElementById('next-button-5').addEventListener('click',()=>goToNextPage());
-      document.getElementById('next-button-6').addEventListener('click',()=>goToNextPage());
-      document.getElementById('next-button-7').addEventListener('click',()=>goToNextPage());
-    }
+    function bindNextButtonEvents(){document.querySelectorAll('[id^="next-button-"]').forEach(e=>e.replaceWith(e.cloneNode(!0))),document.getElementById("next-button-3").addEventListener("click",()=>goToNextPage()),document.getElementById("next-button-4").addEventListener("click",()=>goToNextPage()),document.getElementById("next-button-5").addEventListener("click",()=>goToNextPage()),document.getElementById("next-button-6").addEventListener("click",()=>goToNextPage()),document.getElementById("next-button-7").addEventListener("click",()=>goToNextPage())}
+    function goToNextPage(){updateScore(),currentSequenceIndex++,currentSequenceIndex>=gameSequence.length?showCycleCompleteButtons(gameSequence[gameSequence.length-1]):(setChancesForCycle(),showPage(`page${gameSequence[currentSequenceIndex]}`),initializeGame(gameSequence[currentSequenceIndex]))}
+    function checkGameComplete(e){pageGearData[e].filter(e=>e.correct).every(e=>e.applied)&&(document.getElementById(`next-button-${e}`).disabled=!1,currentSequenceIndex===gameSequence.length-1&&showCycleCompleteButtons(e))}
+    function showCycleCompleteButtons(e){const t=document.getElementById(`button-container-${e}`);t&&(t.innerHTML='<button class="button" onclick="goToPage8()">다음</button><button class="restart-button" onclick="startNewRandomCycle()">다시 학습하기</button>')}
+    function goToPage8(){hideScore(),hideChances(),document.getElementById("final-score").textContent=currentScore,document.getElementById("cert-siteName").innerText="현장명: "+document.getElementById("siteName").value,document.getElementById("cert-workerName").innerText="근로자 이름: "+document.getElementById("workerName").value,document.getElementById("cert-workerAffiliation").innerText="소속: "+document.getElementById("workerAffiliation").value,showPage("page8"),saveScoreAndLoadRanking()}
+    function startNewRandomCycle(){cycleCount++,isInRandomCycle=!0,gameSequence=shuffle([3,4,5,6,7]),currentSequenceIndex=0;for(let e=3;e<=7;e++){const t=document.getElementById(`button-container-${e}`);t&&(t.innerHTML=`<button class="button" id="next-button-${e}" disabled>다음</button>`)}showPage(`page${gameSequence[0]}`),initializeGame(gameSequence[0]),bindNextButtonEvents()}
+    document.getElementById("homeButton").addEventListener("click",()=>location.reload());
+    function showPage(e){document.querySelectorAll(".page").forEach(e=>e.classList.remove("active")),document.getElementById(e).classList.add("active")}
+    function shuffle(e){for(let t=e.length-1;t>0;t--){const n=Math.floor(Math.random()*(t+1));[e[t],e[n]]=[e[n],e[t]]}return e}
+    function initializeGame(e){pageGearData[e].forEach(e=>e.applied=!1);const t=shuffle([...pageGearData[e]]),n=document.getElementById(`gear-grid-${e}`);n.innerHTML="",0===currentSequenceIndex&&setChancesForCycle(),t.forEach(t=>{const r=document.createElement("div");r.className="gear-item";const a=document.createElement("img");a.src=t.thumbnail,a.classList.add("rounded-border"),a.dataset.id=t.id,a.style.pointerEvents="auto",a.style.opacity="1",a.style.cursor="pointer",a.addEventListener("click",()=>handleGearClick(t,a,e)),r.appendChild(a),n.appendChild(r)});const r=document.querySelector(`#page${e} .worker-container`);r.querySelectorAll(".overlay").forEach(e=>e.remove()),document.getElementById(`next-button-${e}`).disabled=!0,document.getElementById(`error-message-${e}`).innerText=""}
+    function handleGearClick(e,t,n){if(cycleCount>1&&decreaseChances())return;e.correct?(e.applied?(t.style.opacity=1,e.applied=!1,removeOverlayImage(e,n)):(t.style.opacity=.5,e.applied=!0,addOverlayImage(e,n))):(document.getElementById(`error-message-${n}`).innerText="올바르지 않은 보호구입니다.",setTimeout(()=>{document.getElementById(`error-message-${n}`).innerText=""},2e3)),checkGameComplete(n)}
+    function addOverlayImage(e,t){if(!e.overlay)return;const n=document.querySelector(`#page${t} .worker-container`),r=document.createElement("img");r.src=e.overlay,r.className="overlay",r.dataset.id=e.id,r.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;z-index:"+e.zIndex,n.appendChild(r)}
+    function removeOverlayImage(e,t){const n=document.querySelector(`#page${t} .worker-container img.overlay[data-id="${e.id}"]`);n&&n.remove()}
 
-    function goToNextPage(){
-      updateScore();currentSequenceIndex++;
-      if(currentSequenceIndex>=gameSequence.length){
-        showCycleCompleteButtons(gameSequence[gameSequence.length-1]);return;
-      }
-      const nextPage=gameSequence[currentSequenceIndex];
-      setChancesForCycle();showPage(`page${nextPage}`);initializeGame(nextPage);
-    }
-
-    function checkGameComplete(pageNum){
-      const items=pageGearData[pageNum];
-      const allApplied=items.filter(i=>i.correct).every(i=>i.applied);
-      const nextBtn=document.getElementById(`next-button-${pageNum}`);
-      if(nextBtn)nextBtn.disabled=!allApplied;
-      if(allApplied&&currentSequenceIndex===gameSequence.length-1){
-        showCycleCompleteButtons(pageNum);
-      }
-    }
-
-    function showCycleCompleteButtons(pageNum){
-      const c=document.getElementById(`button-container-${pageNum}`);
-      if(c)c.innerHTML=`
-        <button class="button" onclick="goToPage8()">다음</button>
-        <button class="restart-button" onclick="startNewRandomCycle()">다시 학습하기</button>`;
-    }
-
-    function goToPage8(){
-      hideScore();hideChances();
-      document.getElementById('final-score').textContent=currentScore;
-      document.getElementById('cert-siteName').innerText="현장명: "+document.getElementById('siteName').value;
-      document.getElementById('cert-workerName').innerText="근로자 이름: "+document.getElementById('workerName').value;
-      document.getElementById('cert-workerAffiliation').innerText="소속: "+document.getElementById('workerAffiliation').value;
-      showPage('page8');saveScoreAndLoadRanking();
-    }
-
-    function startNewRandomCycle(){
-      cycleCount++;isInRandomCycle=true;gameSequence=shuffle([3,4,5,6,7]);currentSequenceIndex=0;
-      for(let i=3;i<=7;i++){
-        const c=document.getElementById(`button-container-${i}`);
-        if(c)c.innerHTML=`<button class="button" id="next-button-${i}" disabled>다음</button>`;
-      }
-      const first=gameSequence[0];showPage(`page${first}`);initializeGame(first);bindNextButtonEvents();
-    }
-
-    document.getElementById('homeButton').addEventListener('click',()=>location.reload());
-
-    function showPage(id){
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-    function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
-
-    function initializeGame(pageNum){
-      const items=pageGearData[pageNum];items.forEach(i=>i.applied=false);
-      const shuffled=shuffle([...items]);const grid=document.getElementById(`gear-grid-${pageNum}`);grid.innerHTML='';
-      if(currentSequenceIndex===0)setChancesForCycle();
-      shuffled.forEach(item=>{
-        const d=document.createElement('div');d.className='gear-item';
-        const img=document.createElement('img');img.src=item.thumbnail;img.classList.add('rounded-border');img.dataset.id=item.id;
-        img.style.pointerEvents='auto';img.style.opacity='1';img.style.cursor='pointer';
-        img.addEventListener('click',()=>handleGearClick(item,img,pageNum));
-        d.appendChild(img);grid.appendChild(d);
-      });
-      const container=document.querySelector(`#page${pageNum} .worker-container`);
-      container.querySelectorAll('.overlay').forEach(o=>o.remove());
-      const nextBtn=document.getElementById(`next-button-${pageNum}`);if(nextBtn)nextBtn.disabled=true;
-      document.getElementById(`error-message-${pageNum}`).innerText='';
-    }
-
-    function handleGearClick(item,el,pageNum){
-      if(cycleCount>1){if(decreaseChances())return;}
-      if(item.correct){
-        if(!item.applied){el.style.opacity=.5;item.applied=true;addOverlayImage(item,pageNum);}
-        else{el.style.opacity=1;item.applied=false;removeOverlayImage(item,pageNum);}
-      }else{
-        const err=document.getElementById(`error-message-${pageNum}`);
-        err.innerText='올바르지 않은 보호구입니다.';setTimeout(()=>err.innerText='',2000);
-      }
-      checkAllCorrectApplied(pageNum);
-    }
-    function addOverlayImage(item,pageNum){
-      if(!item.overlay)return;
-      const container=document.querySelector(`#page${pageNum} .worker-container`);
-      const o=document.createElement('img');o.src=item.overlay;o.className='overlay';o.dataset.id=item.id;
-      o.style.position='absolute';o.style.top=0;o.style.left=0;o.style.width='100%';o.style.height='100%';o.style.zIndex=item.zIndex;
-      container.appendChild(o);
-    }
-    function removeOverlayImage(item,pageNum){
-      const container=document.querySelector(`#page${pageNum} .worker-container`);
-      const o=container.querySelector(`img.overlay[data-id="${item.id}"]`);if(o)o.remove();
-    }
-    function checkAllCorrectApplied(pageNum){checkGameComplete(pageNum);}
-
-    /* ==== 점수 저장 / 랭킹 ==== */
-    async function saveScoreAndLoadRanking(){
-      const data={
-        name:document.getElementById('workerName').value,
-        siteName:document.getElementById('siteName').value,
-        affiliation:document.getElementById('workerAffiliation').value,
-        score:currentScore,timestamp:new Date()
-      };
-      try{
-        if(db){await saveToFirestore(data);await loadRankingFromFirestore();}
-        else{saveToLocalStorage(data);loadRankingFromLocalStorage();}
-      }catch(e){console.error('점수 저장 실패:',e);saveToLocalStorage(data);loadRankingFromLocalStorage();}
-    }
-
-    async function saveToFirestore(d){
-      const week=getKoreanWeekId();const ref=db.collection('rankings').doc(week);
-      const doc=await ref.get();let ranks=[];if(doc.exists)ranks=doc.data().rankings||[];
-      ranks.push(d);ranks.sort((a,b)=>b.score-a.score);if(ranks.length>5)ranks=ranks.slice(0,5);
-      await ref.set({rankings:ranks});
-    }
-    async function loadRankingFromFirestore(){
-      const week=getKoreanWeekId();const ref=db.collection('rankings').doc(week);
-      const doc=await ref.get();let ranks=[];if(doc.exists)ranks=doc.data().rankings||[];
-      displayRanking(ranks);
-    }
-    function saveToLocalStorage(d){
-      const week=getKoreanWeekId();const key=`rankings_${week}`;let ranks=JSON.parse(localStorage.getItem(key)||'[]');
-      ranks.push(d);ranks.sort((a,b)=>b.score-a.score);if(ranks.length>5)ranks=ranks.slice(0,5);localStorage.setItem(key,JSON.stringify(ranks));
-    }
-    function loadRankingFromLocalStorage(){
-      const week=getKoreanWeekId();const key=`rankings_${week}`;const ranks=JSON.parse(localStorage.getItem(key)||'[]');displayRanking(ranks);
-    }
-    function getKoreanWeekId(){
-      const now=new Date();const kor=new Date(now.getTime()+9*60*60*1000);
-      const sunday=new Date(kor);sunday.setDate(kor.getDate()-kor.getDay());sunday.setHours(0,0,0,0);
-      const y=sunday.getFullYear();const m=String(sunday.getMonth()+1).padStart(2,'0');const d=String(sunday.getDate()).padStart(2,'0');
-      return `${y}-${m}-${d}`;
-    }
-    function displayRanking(ranks){
-      document.getElementById('ranking-loading').style.display='none';
-      document.getElementById('ranking-table').style.display='table';
-      const tbody=document.getElementById('ranking-body');tbody.innerHTML='';
-      for(let i=0;i<5;i++){
-        const row=tbody.insertRow();const r=i+1;
-        if(i<ranks.length){
-          const v=ranks[i];row.innerHTML=`<td>${r}</td><td>${v.name}</td><td>${v.siteName}</td><td>${v.affiliation}</td><td>${v.score}</td>`;
-        }else{row.innerHTML=`<td>${r}</td><td>-</td><td>-</td><td>-</td><td>-</td>`;}
-      }
-    }
-
-    /* ==== 수료증 저장 ==== */
-    document.getElementById('saveCert').addEventListener('click',()=>{
-      html2canvas(document.getElementById('certificate-box')).then(canvas=>{
-        const link=document.createElement('a');link.download='certificate.png';link.href=canvas.toDataURL();link.click();
-      });
-    });
+    /* ---- 랭킹 저장·표시 (동일) ---- */
+    async function saveScoreAndLoadRanking(){const e={name:document.getElementById("workerName").value,siteName:document.getElementById("siteName").value,affiliation:document.getElementById("workerAffiliation").value,score:currentScore,timestamp:new Date};try{db?(await saveToFirestore(e),await loadRankingFromFirestore()):(saveToLocalStorage(e),loadRankingFromLocalStorage())}catch(t){console.error("점수 저장 실패:",t),saveToLocalStorage(e),loadRankingFromLocalStorage()}}
+    async function saveToFirestore(e){const t=getWeekIdKR(),n=db.collection("rankings").doc(t),r=await n.get();let a=[];r.exists&&(a=r.data().rankings||[]),a.push(e),a.sort((e,t)=>t.score-e.score),a.length>5&&(a=a.slice(0,5)),await n.set({rankings:a})}
+    async function loadRankingFromFirestore(){const e=getWeekIdKR(),t=db.collection("rankings").doc(e),n=await t.get();displayRanking(n.exists?n.data().rankings||[]:[])}
+    function saveToLocalStorage(e){const t=getWeekIdKR(),n=`rankings_${t}`;let r=JSON.parse(localStorage.getItem(n)||"[]");r.push(e),r.sort((e,t)=>t.score-e.score),r.length>5&&(r=r.slice(0,5)),localStorage.setItem(n,JSON.stringify(r))}
+    function loadRankingFromLocalStorage(){const e=getWeekIdKR(),t=`rankings_${e}`,n=JSON.parse(localStorage.getItem(t)||"[]");displayRanking(n)}
+    function getWeekIdKR(){const e=new Date,t=new Date(e.getTime()+324e5);t.setDate(t.getDate()-t.getDay()),t.setHours(0,0,0,0);const n=t.getFullYear(),r=String(t.getMonth()+1).padStart(2,"0"),a=String(t.getDate()).padStart(2,"0");return`${n}-${r}-${a}`}
+    function displayRanking(e){document.getElementById("ranking-loading").style.display="none",document.getElementById("ranking-table").style.display="table";const t=document.getElementById("ranking-body");t.innerHTML="";for(let n=0;n<5;n++){const r=t.insertRow();if(n<e.length){const t=e[n];r.innerHTML=`<td>${n+1}</td><td>${t.name}</td><td>${t.siteName}</td><td>${t.affiliation}</td><td>${t.score}</td>`}else r.innerHTML=`<td>${n+1}</td><td>-</td><td>-</td><td>-</td><td>-</td>`}}
+    /* ---- 수료증 저장 ---- */
+    document.getElementById("saveCert").addEventListener("click",()=>{html2canvas(document.getElementById("certificate-box")).then(e=>{const t=document.createElement("a");t.download="certificate.png",t.href=e.toDataURL(),t.click()})});
 
     /* 초기 바인딩 */
     bindNextButtonEvents();
