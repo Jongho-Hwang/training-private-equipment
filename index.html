@@ -9,251 +9,239 @@
     .page { display: none; padding: 20px; }
     .active { display: block; }
     .center { text-align: center; }
-    /* 얇은 검정색 둥근 테두리 (애플 아이콘 스타일) */
-    .rounded-border {
-      border: 1px solid black;
-      border-radius: 10px;
-    }
-    /* 페이지1 스타일 */
-    #page1 img { max-width: 100%; height: auto; }
-    /* 페이지2 스타일 */
-    #page2 { text-align: left; }
-    .blink { color: red; }
-    /* 페이지3 스타일 */
-    #worker-container {
-      position: relative;
-      width: 100%;
-      /* 모바일 화면 폭에 맞춰 전체 너비 사용 */
-      text-align: center;
-    }
-    /* 근로자 이미지는 컨테이너 폭에 맞게 100%로 표시 */
-    #worker-image {
-      width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
+    .rounded-border { border: 1px solid black; border-radius: 10px; }
+    /* 공통 스타일 */
+    .button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+    /* 페이지3~7 근로자 컨테이너 */
+    #worker-container { position: relative; width: 100%; text-align: center; }
+    #worker-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
     /* 보호구 그리드 */
-    #gear-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .gear-item {
-      width: 100%;
-      position: relative;
-    }
-    /* 보호구 썸네일: 80% 크기로 축소, 중앙 정렬, 둥근 테두리 적용 */
-    .gear-item img {
-      width: 80%;
-      display: block;
-      cursor: pointer;
-      margin: 0 auto;
-    }
-    /* 페이지4 스타일 */
-    #certificate-box {
-      border: 2px solid #000;
-      padding: 20px;
-      margin: 20px 0;
-      text-align: center;
-    }
-    .button {
-      padding: 10px 20px;
-      margin: 10px;
-      font-size: 16px;
-      cursor: pointer;
-    }
+    #gear-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+    .gear-item img { width: 80%; display: block; cursor: pointer; margin: 0 auto; }
+    /* 에러 메시지 */
+    #error-message { color: red; text-align: center; margin-top: 10px; }
+    /* 수료증 박스 */
+    #certificate-box { border: 2px solid #000; padding: 20px; margin: 20px 0; text-align: left; }
   </style>
 </head>
 <body>
-  <!-- 페이지1: 시작 화면 -->
+  <!-- 페이지1: 시작 -->
   <div id="page1" class="page active">
     <div class="center">
       <h1>작업별 보호구 착용 교육</h1>
       <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지">
       <br>
-      <button class="button" id="startButton">교육 시작하기</button>
+      <button class="button" onclick="goPage(2)">교육 시작하기</button>
     </div>
   </div>
 
-  <!-- 페이지2: 근로자 정보 입력 -->
+  <!-- 페이지2: 정보 입력 -->
   <div id="page2" class="page">
-    <h2>근로자 정보 입력</h2>
+    <h2>교육 정보 입력</h2>
+    <label>현장명:</label><br>
+    <input type="text" id="siteName" placeholder="현장명 입력"><br><br>
     <label>근로자 이름:</label><br>
     <input type="text" id="workerName" placeholder="이름 입력"><br><br>
     <label>소속:</label><br>
     <input type="text" id="workerAffiliation" placeholder="소속 입력"><br><br>
-    <div class="blink">작업 상황에 따른 보호구 착용 기준을 옷입히기 게임 방식으로 학습합니다.
-      근로자 캐릭터 하단의 보호구를 클릭하여 올바른 보호구를 착용시켜주세요.</div>
-    <br>
-    <button class="button" id="toPage3">다음</button>
+    <button class="button" onclick="goPage(3)">다음</button>
   </div>
 
-  <!-- 페이지3: 보호구 착용 게임 -->
+  <!-- 페이지3: 공통작업 -->
   <div id="page3" class="page">
-    <h2>공통 작업 개인보호구 착용</h2>
-    <div id="worker-container" class="center">
-      <!-- 근로자 이미지 (둥근 테두리 적용) -->
-      <img id="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지" class="rounded-border">
-      <!-- 보호구 오버레이 이미지가 동적으로 추가됨 -->
-    </div>
+    <h2>일반작업 시 고소작업 시 필수착용 개인보호구</h2>
+    <div id="worker-container" class="center"></div>
     <div id="gear-grid"></div>
-    <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
-    <div class="center">
-      <button class="button" id="toPage4" disabled>다음</button>
-    </div>
+    <div id="error-message"></div>
+    <div class="center"><button class="button" onclick="goPage(4)" id="btn3" disabled>다음</button></div>
   </div>
 
-  <!-- 페이지4: 수료증 화면 -->
+  <!-- 페이지4: 용접작업 -->
   <div id="page4" class="page">
+    <h2>용접작업 시 필수착용 개인보호구</h2>
+    <div id="worker-container" class="center"></div>
+    <div id="gear-grid"></div>
+    <div id="error-message"></div>
+    <div class="center"><button class="button" onclick="goPage(5)" id="btn4" disabled>다음</button></div>
+  </div>
+
+  <!-- 페이지5: 정전작업1 -->
+  <div id="page5" class="page">
+    <h2>정전작업 시 필수착용 개인보호구</h2>
+    <div id="worker-container" class="center"></div>
+    <div id="gear-grid"></div>
+    <div id="error-message"></div>
+    <div class="center"><button class="button" onclick="goPage(6)" id="btn5" disabled>다음</button></div>
+  </div>
+
+  <!-- 페이지6: 정전작업2 -->
+  <div id="page6" class="page">
+    <h2>정전작업 시 필수착용 개인보호구</h2>
+    <div id="worker-container" class="center"></div>
+    <div id="gear-grid"></div>
+    <div id="error-message"></div>
+    <div class="center"><button class="button" onclick="goPage(7)" id="btn6" disabled>다음</button></div>
+  </div>
+
+  <!-- 페이지7: 일반작업 공통착용 -->
+  <div id="page7" class="page">
+    <h2>일반작업 공통착용 개인보호구</h2>
+    <div id="worker-container" class="center"></div>
+    <div id="gear-grid"></div>
+    <div id="error-message"></div>
+    <div class="center"><button class="button" onclick="goPage(8)" id="btn7" disabled>다음</button></div>
+  </div>
+
+  <!-- 페이지8: 수료증 -->
+  <div id="page8" class="page">
     <h2>수료증</h2>
     <div id="certificate-box">
-      <p id="cert-workerName"></p>
-      <p id="cert-workerAffiliation"></p>
+      <p>현장명: <span id="cert-site"></span></p>
+      <p>근로자 이름: <span id="cert-worker"></span></p>
+      <p>소속: <span id="cert-affiliation"></span></p>
       <p>보호구 교육을 모두 수료하셨습니다.</p>
     </div>
-    <div style="text-align: center;">
-      <p>관리자에게 수료증 화면을 보여주세요</p>
-      <button class="button" id="saveCert">저장하기</button>
-      <button class="button" id="homeButton">홈으로</button>
+    <div class="center">
+      <button class="button" onclick="saveCert()">저장하기</button>
+      <button class="button" onclick="goPage(1)">홈으로</button>
     </div>
   </div>
 
-  <!-- html2canvas (수료증 캡쳐용) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
-    // 페이지 전환 이벤트
-    document.getElementById('startButton').addEventListener('click', function() {
-      showPage('page2');
-    });
+    let currentPage = 1;
+    const gearData = {
+      3: {
+        workerImg: 'https://i.imgur.com/Ifwwzoz.png',
+        items: [
+          {id:1, thumb:'https://i.imgur.com/yvsCOBF.png', overlay:'https://i.imgur.com/yTJe79p.png', correct:true, z:3},
+          {id:2, thumb:'https://i.imgur.com/8gsL65v.png', overlay:'https://i.imgur.com/zBCjthf.png', correct:true, z:4},
+          {id:3, thumb:'https://i.imgur.com/nvoxlp7.png', overlay:'https://i.imgur.com/VfJMtc3.png', correct:true, z:5},
+          {id:4, thumb:'https://i.imgur.com/m1GZRHc.png', overlay:'https://i.imgur.com/Cphm4b5.png', correct:true, z:2},
+          {id:5, thumb:'https://i.imgur.com/d7Plzcn.png', overlay:'https://i.imgur.com/5VxjKY6.png', correct:true, z:6},
+          {id:6, thumb:'https://i.imgur.com/Ui2tbVv.png', overlay:'', correct:false, z:1}
+        ]
+      },
+      4: {
+        workerImg: 'https://imgur.com/WlQOZoc',
+        items: [
+          {id:1, thumb:'https://imgur.com/nvoxlp7', overlay:'', correct:false, z:1},
+          {id:2, thumb:'https://imgur.com/oU1hjTk', overlay:'https://imgur.com/cPHvWTb', correct:true, z:3},
+          {id:3, thumb:'https://imgur.com/Ui2tbVv', overlay:'https://imgur.com/S77YoN3', correct:true, z:4},
+          {id:4, thumb:'https://imgur.com/Cbcyknu', overlay:'https://imgur.com/v5kUQPg', correct:true, z:2},
+          {id:5, thumb:'https://imgur.com/nvoxlp7', overlay:'', correct:false, z:5},
+          {id:6, thumb:'https://imgur.com/fdH4wzC', overlay:'', correct:false, z:6}
+        ]
+      },
+      5: {
+        workerImg: 'https://imgur.com/WlQOZoc',
+        items: [
+          {id:1, thumb:'https://imgur.com/NnWSEdz', overlay:'https://imgur.com/ImnVVaf', correct:true},
+          {id:2, thumb:'https://imgur.com/NdbXUPl', overlay:'https://imgur.com/IMelM9Q', correct:true},
+          {id:3, thumb:'https://imgur.com/Z5ojhhi', overlay:'https://imgur.com/3KX2VD4', correct:true},
+          {id:4, thumb:'https://imgur.com/Ui2tbVv', overlay:'', correct:false},
+          {id:5, thumb:'https://imgur.com/Cbcyknu', overlay:'', correct:false},
+          {id:6, thumb:'https://imgur.com/fdH4wzC', overlay:'', correct:false}
+        ]
+      },
+      6: {
+        workerImg: 'https://i.imgur.com/Ifwwzoz.png',
+        items: [
+          {id:1, thumb:'https://imgur.com/fdH4wzC', overlay:'https://imgur.com/fdH4wzC', correct:true, z:1},
+          {id:2, thumb:'https://imgur.com/yvsCOBF.png', overlay:'https://imgur.com/yTJe79p.png', correct:true, z:2},
+          {id:3, thumb:'https://imgur.com/F1PF0tE', overlay:'https://imgur.com/Gctejg5', correct:true, z:3},
+          {id:4, thumb:'https://imgur.com/n6iJRus', overlay:'https://imgur.com/oAQe9gI', correct:true, z:4},
+          {id:5, thumb:'https://imgur.com/d7Plzcn.png', overlay:'https://imgur.com/5VxjKY6.png', correct:true},
+          {id:6, thumb:'https://imgur.com/NdbXUPl', overlay:'', correct:false}
+        ]
+      },
+      7: {
+        workerImg: 'https://imgur.com/Ifwwzoz.png',
+        items: [
+          {id:1, thumb:'https://imgur.com/yvsCOBF.png', overlay:'https://imgur.com/yTJe79p.png', correct:true},
+          {id:2, thumb:'https://imgur.com/nvoxlp7', overlay:'https://imgur.com/VfJMtc3.png', correct:true},
+          {id:3, thumb:'https://imgur.com/d7Plzcn', overlay:'https://imgur.com/5VxjKY6.png', correct:true},
+          {id:4, thumb:'https://imgur.com/m1GZRHc', overlay:'https://imgur.com/Cphm4b5.png', correct:true},
+          {id:5, thumb:'https://imgur.com/Cbcyknu', overlay:'', correct:false},
+          {id:6, thumb:'https://imgur.com/Ui2tbVv', overlay:'', correct:false}
+        ]
+      }
+    };
 
-    document.getElementById('toPage3').addEventListener('click', function() {
-      if(document.getElementById('workerName').value.trim() === '' || document.getElementById('workerAffiliation').value.trim() === '') {
-        alert('근로자 이름과 소속을 입력해주세요.');
+    function goPage(num) {
+      // 페이지 전환
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById('page'+num).classList.add('active');
+      currentPage = num;
+      if(num>=3 && num<=7) initGearPage(num);
+      if(num===8) showCertificate();
+    }
+
+    function initGearPage(pg) {
+      const data = gearData[pg];
+      const container = document.getElementById('worker-container');
+      container.innerHTML = '<img src="'+data.workerImg+'" class="rounded-border" alt="근로자 이미지">';
+      const grid = document.getElementById('gear-grid'); grid.innerHTML='';
+      document.getElementById('error-message').innerText='';
+      const btn = document.getElementById('btn'+pg);
+      btn.disabled = true;
+      data.items.forEach(item=>{
+        item.applied=false;
+        const div=document.createElement('div'); div.className='gear-item';
+        const img=document.createElement('img');
+        img.src=item.thumb; img.className='rounded-border'; img.dataset.id=item.id;
+        img.onclick=()=>toggleItem(pg,item,img);
+        div.appendChild(img); grid.appendChild(div);
+      });
+    }
+
+    function toggleItem(pg,item,imgElem) {
+      const data=gearData[pg];
+      if(!item.correct) {
+        document.getElementById('error-message').innerText='올바르지 않은 보호구가 아닙니다.';
+        setTimeout(()=>document.getElementById('error-message').innerText='',2000);
         return;
       }
-      showPage('page3');
-      initializeGame();
-    });
+      item.applied=!item.applied;
+      imgElem.style.opacity=item.applied?0.5:1;
+      if(item.applied) addOverlay(pg,item);
+      else removeOverlay(item);
+      checkAll(pg);
+    }
 
-    document.getElementById('toPage4').addEventListener('click', function() {
-      document.getElementById('cert-workerName').innerText = "근로자 이름: " + document.getElementById('workerName').value;
-      document.getElementById('cert-workerAffiliation').innerText = "소속: " + document.getElementById('workerAffiliation').value;
-      showPage('page4');
-    });
+    function addOverlay(pg,item) {
+      const container=document.getElementById('worker-container');
+      const overlay=document.createElement('img');
+      overlay.src=item.overlay; overlay.className='overlay'; overlay.dataset.id=item.id;
+      overlay.style.position='absolute'; overlay.style.top='0'; overlay.style.left='0';
+      overlay.style.width='100%'; overlay.style.height='100%';
+      if(item.z) overlay.style.zIndex=item.z;
+      container.appendChild(overlay);
+    }
 
-    document.getElementById('homeButton').addEventListener('click', function() {
-      location.reload();
-    });
+    function removeOverlay(item) {
+      const container=document.getElementById('worker-container');
+      const ov=container.querySelector('img.overlay[data-id="'+item.id+'"]');
+      if(ov) container.removeChild(ov);
+    }
 
-    // 지정한 페이지 표시
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(function(page) {
-        page.classList.remove('active');
+    function checkAll(pg) {
+      const all=gearData[pg].items.filter(i=>i.correct).every(i=>i.applied);
+      document.getElementById('btn'+pg).disabled=!all;
+    }
+
+    function showCertificate() {
+      document.getElementById('cert-site').innerText=document.getElementById('siteName').value;
+      document.getElementById('cert-worker').innerText=document.getElementById('workerName').value;
+      document.getElementById('cert-affiliation').innerText=document.getElementById('workerAffiliation').value;
+    }
+
+    function saveCert() {
+      html2canvas(document.getElementById('certificate-box')).then(canvas=>{
+        const link=document.createElement('a'); link.download='certificate.png';
+        link.href=canvas.toDataURL(); link.click();
       });
-      document.getElementById(pageId).classList.add('active');
     }
-
-    // 페이지3 게임 로직
-    let gearItems = [
-      { id: 1, thumbnail: 'https://i.imgur.com/yvsCOBF.png', overlay: 'https://i.imgur.com/yTJe79p.png', correct: true, applied: false },
-      { id: 2, thumbnail: 'https://i.imgur.com/8gsL65v.png', overlay: 'https://i.imgur.com/zBCjthf.png', correct: true, applied: false },
-      { id: 3, thumbnail: 'https://i.imgur.com/nvoxlp7.png', overlay: 'https://i.imgur.com/VfJMtc3.png', correct: true, applied: false },
-      { id: 4, thumbnail: 'https://i.imgur.com/m1GZRHc.png', overlay: 'https://i.imgur.com/Cphm4b5.png', correct: true, applied: false },
-      { id: 5, thumbnail: 'https://i.imgur.com/d7Plzcn.png', overlay: 'https://i.imgur.com/5VxjKY6.png', correct: true, applied: false },
-      { id: 6, thumbnail: 'https://i.imgur.com/Ui2tbVv.png', overlay: '', correct: false, applied: false }
-    ];
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    function initializeGame() {
-      gearItems.forEach(item => item.applied = false);
-      const shuffledItems = shuffle([...gearItems]);
-      const gearGrid = document.getElementById('gear-grid');
-      gearGrid.innerHTML = '';
-      shuffledItems.forEach(item => {
-        const gearDiv = document.createElement('div');
-        gearDiv.className = 'gear-item';
-        const img = document.createElement('img');
-        img.src = item.thumbnail;
-        img.classList.add('rounded-border');
-        img.dataset.id = item.id;
-        img.addEventListener('click', function() {
-          handleGearClick(item, img);
-        });
-        gearDiv.appendChild(img);
-        gearGrid.appendChild(gearDiv);
-      });
-      // 기존 오버레이 제거
-      const workerContainer = document.getElementById('worker-container');
-      workerContainer.querySelectorAll('.overlay').forEach(overlay => overlay.remove());
-      document.getElementById('toPage4').disabled = true;
-      document.getElementById('error-message').innerText = '';
-    }
-
-    function handleGearClick(item, imgElement) {
-      if(item.correct) {
-        if(!item.applied) {
-          imgElement.style.opacity = 0.5;
-          item.applied = true;
-          addOverlayImage(item);
-        } else {
-          imgElement.style.opacity = 1;
-          item.applied = false;
-          removeOverlayImage(item);
-        }
-      } else {
-        document.getElementById('error-message').innerText = '올바른 보호구가 아닙니다.';
-        setTimeout(() => {
-          document.getElementById('error-message').innerText = '';
-        }, 2000);
-      }
-      checkAllCorrectApplied();
-    }
-
-    function addOverlayImage(item) {
-      if(!item.overlay) return;
-      const workerContainer = document.getElementById('worker-container');
-      const overlayImg = document.createElement('img');
-      overlayImg.src = item.overlay;
-      overlayImg.className = 'overlay';
-      overlayImg.dataset.id = item.id;
-      // 근로자 이미지와 완전히 겹치도록 설정 (모바일 화면에 맞춰 100% 적용)
-      overlayImg.style.position = 'absolute';
-      overlayImg.style.top = '0';
-      overlayImg.style.left = '0';
-      overlayImg.style.width = '100%';
-      overlayImg.style.height = '100%';
-      workerContainer.appendChild(overlayImg);
-    }
-
-    function removeOverlayImage(item) {
-      const workerContainer = document.getElementById('worker-container');
-      const overlay = workerContainer.querySelector('img.overlay[data-id="'+item.id+'"]');
-      if(overlay) overlay.remove();
-    }
-
-    function checkAllCorrectApplied() {
-      const allApplied = gearItems.filter(item => item.correct).every(item => item.applied);
-      document.getElementById('toPage4').disabled = !allApplied;
-    }
-
-    document.getElementById('saveCert').addEventListener('click', function() {
-      const certificateBox = document.getElementById('certificate-box');
-      html2canvas(certificateBox).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'certificate.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
-    });
   </script>
 </body>
 </html>
