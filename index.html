@@ -10,8 +10,14 @@
     .active { display: block; }
     .center { text-align: center; }
     .rounded-border { border: 1px solid black; border-radius: 10px; }
-    /* 공통 스타일 */
     .button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+    /* 모바일 최적화: 페이지1 전체화면 중앙 배치 */
+    #page1 { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; padding: 0; }
+    #page1 img { width: 90vw; max-width: 300px; height: auto; }
+    #page1 .button { width: 80vw; max-width: 200px; }
+    /* 페이지2 입력 필드 */
+    #page2 { text-align: left; }
+    #page2 input { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
     /* 페이지3~7 근로자 컨테이너 */
     #worker-container { position: relative; width: 100%; text-align: center; }
     #worker-container img { width: 100%; height: auto; display: block; margin: 0 auto; }
@@ -27,23 +33,20 @@
 <body>
   <!-- 페이지1: 시작 -->
   <div id="page1" class="page active">
-    <div class="center">
-      <h1>작업별 보호구 착용 교육</h1>
-      <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지">
-      <br>
-      <button class="button" onclick="goPage(2)">교육 시작하기</button>
-    </div>
+    <h1>작업별 보호구 착용 교육</h1>
+    <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지">
+    <button class="button" onclick="goPage(2)">교육 시작하기</button>
   </div>
 
   <!-- 페이지2: 정보 입력 -->
   <div id="page2" class="page">
     <h2>교육 정보 입력</h2>
-    <label>현장명:</label><br>
-    <input type="text" id="siteName" placeholder="현장명 입력"><br><br>
-    <label>근로자 이름:</label><br>
-    <input type="text" id="workerName" placeholder="이름 입력"><br><br>
-    <label>소속:</label><br>
-    <input type="text" id="workerAffiliation" placeholder="소속 입력"><br><br>
+    <label>현장명:</label>
+    <input type="text" id="siteName" placeholder="현장명 입력">
+    <label>근로자 이름:</label>
+    <input type="text" id="workerName" placeholder="이름 입력">
+    <label>소속:</label>
+    <input type="text" id="workerAffiliation" placeholder="소속 입력">
     <button class="button" onclick="goPage(3)">다음</button>
   </div>
 
@@ -111,8 +114,7 @@
   <script>
     let currentPage = 1;
     const gearData = {
-      3: {
-        workerImg: 'https://i.imgur.com/Ifwwzoz.png',
+      3: { workerImg: 'https://i.imgur.com/Ifwwzoz.png',
         items: [
           {id:1, thumb:'https://i.imgur.com/yvsCOBF.png', overlay:'https://i.imgur.com/yTJe79p.png', correct:true, z:3},
           {id:2, thumb:'https://i.imgur.com/8gsL65v.png', overlay:'https://i.imgur.com/zBCjthf.png', correct:true, z:4},
@@ -122,124 +124,126 @@
           {id:6, thumb:'https://i.imgur.com/Ui2tbVv.png', overlay:'', correct:false, z:1}
         ]
       },
-      4: {
-        workerImg: 'https://imgur.com/WlQOZoc',
+      4: { workerImg: 'https://i.imgur.com/WlQOZoc.png',
         items: [
-          {id:1, thumb:'https://imgur.com/nvoxlp7', overlay:'', correct:false, z:1},
-          {id:2, thumb:'https://imgur.com/oU1hjTk', overlay:'https://imgur.com/cPHvWTb', correct:true, z:3},
-          {id:3, thumb:'https://imgur.com/Ui2tbVv', overlay:'https://imgur.com/S77YoN3', correct:true, z:4},
-          {id:4, thumb:'https://imgur.com/Cbcyknu', overlay:'https://imgur.com/v5kUQPg', correct:true, z:2},
-          {id:5, thumb:'https://imgur.com/nvoxlp7', overlay:'', correct:false, z:5},
-          {id:6, thumb:'https://imgur.com/fdH4wzC', overlay:'', correct:false, z:6}
+          {id:1, thumb:'https://i.imgur.com/nvoxlp7.png', overlay:'', correct:false},
+          {id:2, thumb:'https://i.imgur.com/oU1hjTk.png', overlay:'https://i.imgur.com/cPHvWTb.png', correct:true},
+          {id:3, thumb:'https://i.imgur.com/Ui2tbVv.png', overlay:'https://i.imgur.com/S77YoN3.png', correct:true},
+          {id:4, thumb:'https://i.imgur.com/Cbcyknu.png', overlay:'https://i.imgur.com/v5kUQPg.png', correct:true, z:2},
+          {id:5, thumb:'https://i.imgur.com/nvoxlp7.png', overlay:'', correct:false},
+          {id:6, thumb:'https://i.imgur.com/fdH4wzC.png', overlay:'', correct:false}
         ]
       },
-      5: {
-        workerImg: 'https://imgur.com/WlQOZoc',
+      5: { workerImg: 'https://i.imgur.com/WlQOZoc.png',
         items: [
-          {id:1, thumb:'https://imgur.com/NnWSEdz', overlay:'https://imgur.com/ImnVVaf', correct:true},
-          {id:2, thumb:'https://imgur.com/NdbXUPl', overlay:'https://imgur.com/IMelM9Q', correct:true},
-          {id:3, thumb:'https://imgur.com/Z5ojhhi', overlay:'https://imgur.com/3KX2VD4', correct:true},
-          {id:4, thumb:'https://imgur.com/Ui2tbVv', overlay:'', correct:false},
-          {id:5, thumb:'https://imgur.com/Cbcyknu', overlay:'', correct:false},
-          {id:6, thumb:'https://imgur.com/fdH4wzC', overlay:'', correct:false}
+          {id:1, thumb:'https://i.imgur.com/NnWSEdz.png', overlay:'https://i.imgur.com/ImnVVaf.png', correct:true},
+          {id:2, thumb:'https://i.imgur.com/NdbXUPl.png', overlay:'https://i.imgur.com/IMelM9Q.png', correct:true},
+          {id:3, thumb:'https://i.imgur.com/Z5ojhhi.png', overlay:'https://i.imgur.com/3KX2VD4.png', correct:true},
+          {id:4, thumb:'https://i.imgur.com/Ui2tbVv.png', overlay:'', correct:false},
+          {id:5, thumb:'https://i.imgur.com/Cbcyknu.png', overlay:'', correct:false},
+          {id:6, thumb:'https://i.imgur.com/fdH4wzC.png', overlay:'', correct:false}
         ]
       },
-      6: {
-        workerImg: 'https://i.imgur.com/Ifwwzoz.png',
+      6: { workerImg: 'https://i.imgur.com/Ifwwzoz.png',
         items: [
-          {id:1, thumb:'https://imgur.com/fdH4wzC', overlay:'https://imgur.com/fdH4wzC', correct:true, z:1},
-          {id:2, thumb:'https://imgur.com/yvsCOBF.png', overlay:'https://imgur.com/yTJe79p.png', correct:true, z:2},
-          {id:3, thumb:'https://imgur.com/F1PF0tE', overlay:'https://imgur.com/Gctejg5', correct:true, z:3},
-          {id:4, thumb:'https://imgur.com/n6iJRus', overlay:'https://imgur.com/oAQe9gI', correct:true, z:4},
-          {id:5, thumb:'https://imgur.com/d7Plzcn.png', overlay:'https://imgur.com/5VxjKY6.png', correct:true},
-          {id:6, thumb:'https://imgur.com/NdbXUPl', overlay:'', correct:false}
+          {id:1, thumb:'https://i.imgur.com/fdH4wzC.png', overlay:'https://i.imgur.com/fdH4wzC.png', correct:true, z:1},
+          {id:2, thumb:'https://i.imgur.com/yvsCOBF.png', overlay:'https://i.imgur.com/yTJe79p.png', correct:true, z:2},
+          {id:3, thumb:'https://i.imgur.com/F1PF0tE.png', overlay:'https://i.imgur.com/Gctejg5.png', correct:true, z:3},
+          {id:4, thumb:'https://i.imgur.com/n6iJRus.png', overlay:'https://i.imgur.com/oAQe9gI.png', correct:true, z:4},
+          {id:5, thumb:'https://i.imgur.com/d7Plzcn.png', overlay:'https://i.imgur.com/5VxjKY6.png', correct:true},
+          {id:6, thumb:'https://i.imgur.com/NdbXUPl.png', overlay:'', correct:false}
         ]
       },
-      7: {
-        workerImg: 'https://imgur.com/Ifwwzoz.png',
+      7: { workerImg: 'https://i.imgur.com/Ifwwzoz.png',
         items: [
-          {id:1, thumb:'https://imgur.com/yvsCOBF.png', overlay:'https://imgur.com/yTJe79p.png', correct:true},
-          {id:2, thumb:'https://imgur.com/nvoxlp7', overlay:'https://imgur.com/VfJMtc3.png', correct:true},
-          {id:3, thumb:'https://imgur.com/d7Plzcn', overlay:'https://imgur.com/5VxjKY6.png', correct:true},
-          {id:4, thumb:'https://imgur.com/m1GZRHc', overlay:'https://imgur.com/Cphm4b5.png', correct:true},
-          {id:5, thumb:'https://imgur.com/Cbcyknu', overlay:'', correct:false},
-          {id:6, thumb:'https://imgur.com/Ui2tbVv', overlay:'', correct:false}
+          {id:1, thumb:'https://i.imgur.com/yvsCOBF.png', overlay:'https://i.imgur.com/yTJe79p.png', correct:true},
+          {id:2, thumb:'https://i.imgur.com/nvoxlp7.png', overlay:'https://i.imgur.com/VfJMtc3.png', correct:true},
+          {id:3, thumb:'https://i.imgur.com/d7Plzcn.png', overlay:'https://i.imgur.com/5VxjKY6.png', correct:true},
+          {id:4, thumb:'https://i.imgur.com/m1GZRHc.png', overlay:'https://i.imgur.com/Cphm4b5.png', correct:true},
+          {id:5, thumb:'https://i.imgur.com/Cbcyknu.png', overlay:'', correct:false},
+          {id:6, thumb:'https://i.imgur.com/Ui2tbVv.png', overlay:'', correct:false}
         ]
       }
     };
 
     function goPage(num) {
-      // 페이지 전환
-      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page'+num).classList.add('active');
       currentPage = num;
-      if(num>=3 && num<=7) initGearPage(num);
-      if(num===8) showCertificate();
+      if (num >=3 && num <=7) initGearPage(num);
+      if (num === 8) showCertificate();
     }
 
     function initGearPage(pg) {
       const data = gearData[pg];
       const container = document.getElementById('worker-container');
-      container.innerHTML = '<img src="'+data.workerImg+'" class="rounded-border" alt="근로자 이미지">';
-      const grid = document.getElementById('gear-grid'); grid.innerHTML='';
-      document.getElementById('error-message').innerText='';
+      container.innerHTML = `<img src="${data.workerImg}" class="rounded-border" alt="근로자 이미지">`;
+      const grid = document.getElementById('gear-grid'); grid.innerHTML = '';
+      document.getElementById('error-message').innerText = '';
       const btn = document.getElementById('btn'+pg);
       btn.disabled = true;
-      data.items.forEach(item=>{
-        item.applied=false;
-        const div=document.createElement('div'); div.className='gear-item';
-        const img=document.createElement('img');
-        img.src=item.thumb; img.className='rounded-border'; img.dataset.id=item.id;
-        img.onclick=()=>toggleItem(pg,item,img);
+      data.items.forEach(item => {
+        item.applied = false;
+        const div = document.createElement('div'); div.className = 'gear-item';
+        const img = document.createElement('img');
+        img.src = item.thumb; img.className = 'rounded-border'; img.dataset.id = item.id;
+        img.addEventListener('click', () => toggleItem(pg, item, img));
         div.appendChild(img); grid.appendChild(div);
       });
     }
 
-    function toggleItem(pg,item,imgElem) {
-      const data=gearData[pg];
-      if(!item.correct) {
-        document.getElementById('error-message').innerText='올바르지 않은 보호구가 아닙니다.';
-        setTimeout(()=>document.getElementById('error-message').innerText='',2000);
-        return;
+    function toggleItem(pg, item, imgElem) {
+      if (!item.correct) {
+        document.getElementById('error-message').innerText = '올바르지 않은 보호구가 아닙니다.';
+        return setTimeout(() => document.getElementById('error-message').innerText = '', 2000);
       }
-      item.applied=!item.applied;
-      imgElem.style.opacity=item.applied?0.5:1;
-      if(item.applied) addOverlay(pg,item);
+      item.applied = !item.applied;
+      imgElem.style.opacity = item.applied ? 0.5 : 1;
+      if (item.applied) addOverlay(pg, item);
       else removeOverlay(item);
       checkAll(pg);
     }
 
-    function addOverlay(pg,item) {
-      const container=document.getElementById('worker-container');
-      const overlay=document.createElement('img');
-      overlay.src=item.overlay; overlay.className='overlay'; overlay.dataset.id=item.id;
-      overlay.style.position='absolute'; overlay.style.top='0'; overlay.style.left='0';
-      overlay.style.width='100%'; overlay.style.height='100%';
-      if(item.z) overlay.style.zIndex=item.z;
+    function addOverlay(pg, item) {
+      const container = document.getElementById('worker-container');
+      const overlay = document.createElement('img');
+      overlay.src = item.overlay; overlay.className = 'overlay'; overlay.dataset.id = item.id;
+      overlay.style.position = 'absolute';
+      const cw = container.clientWidth;
+      const ch = container.clientHeight;
+      const ow = cw * 0.2;
+      const oh = ow;
+      overlay.style.width = ow + 'px';
+      overlay.style.height = oh + 'px';
+      const left = Math.random() * (cw - ow);
+      const top = Math.random() * (ch - oh);
+      overlay.style.left = left + 'px';
+      overlay.style.top = top + 'px';
+      if (item.z) overlay.style.zIndex = item.z;
       container.appendChild(overlay);
     }
 
     function removeOverlay(item) {
-      const container=document.getElementById('worker-container');
-      const ov=container.querySelector('img.overlay[data-id="'+item.id+'"]');
-      if(ov) container.removeChild(ov);
+      const container = document.getElementById('worker-container');
+      const ov = container.querySelector('img.overlay[data-id="'+item.id+'"]');
+      if (ov) container.removeChild(ov);
     }
 
     function checkAll(pg) {
-      const all=gearData[pg].items.filter(i=>i.correct).every(i=>i.applied);
-      document.getElementById('btn'+pg).disabled=!all;
+      const all = gearData[pg].items.filter(i => i.correct).every(i => i.applied);
+      document.getElementById('btn'+pg).disabled = !all;
     }
 
     function showCertificate() {
-      document.getElementById('cert-site').innerText=document.getElementById('siteName').value;
-      document.getElementById('cert-worker').innerText=document.getElementById('workerName').value;
-      document.getElementById('cert-affiliation').innerText=document.getElementById('workerAffiliation').value;
+      document.getElementById('cert-site').innerText = document.getElementById('siteName').value;
+      document.getElementById('cert-worker').innerText = document.getElementById('workerName').value;
+      document.getElementById('cert-affiliation').innerText = document.getElementById('workerAffiliation').value;
     }
 
     function saveCert() {
-      html2canvas(document.getElementById('certificate-box')).then(canvas=>{
-        const link=document.createElement('a'); link.download='certificate.png';
-        link.href=canvas.toDataURL(); link.click();
+      html2canvas(document.getElementById('certificate-box')).then(canvas => {
+        const link = document.createElement('a'); link.download = 'certificate.png';
+        link.href = canvas.toDataURL(); link.click();
       });
     }
   </script>
