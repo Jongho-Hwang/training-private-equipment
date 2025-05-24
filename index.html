@@ -88,7 +88,6 @@
   </div>
 
   <!-- ===== 페이지3~7 ===== -->
-  <!-- 동일 구조 반복 -->
   <div id="page3" class="page"><h2>고소작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-3"></div><div id="error-message-3" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-3"><button class="button" id="next-button-3" disabled>다음</button></div></div>
   <div id="page4" class="page"><h2>용접작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-4"></div><div id="error-message-4" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-4"><button class="button" id="next-button-4" disabled>다음</button></div></div>
   <div id="page5" class="page"><h2>정전작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-5"></div><div id="error-message-5" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-5"><button class="button" id="next-button-5" disabled>다음</button></div></div>
@@ -124,7 +123,7 @@
     /* ---------- Firebase ---------- */
     const firebaseConfig={apiKey:"AIzaSyDqZFIp_jzaUFiNlZxO3AYI3b8H9zDgyW4",authDomain:"training-private-equipment.firebaseapp.com",projectId:"training-private-equipment",storageBucket:"training-private-equipment.firebasestorage.app",messagingSenderId:"428074253490",appId:"1:428074253490:web:77d4040f8af17338795dab"};
     let db=null;
-    try{firebase.initializeApp(firebaseConfig);db=firebase.firestore()}catch(e){console.log("Firestore 미사용 → 로컬 사용");}
+    try{firebase.initializeApp(firebaseConfig);db=firebase.firestore()}catch{}
 
     /* ---------- 보호구 데이터 ---------- */
     const pageGearData={3:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/8gsL65v.png",overlay:"https://i.imgur.com/zBCjthf.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:6}],4:[{id:1,thumbnail:"https://imgur.com/n6iJRus.png",overlay:"",correct:false,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/oU1hjTk.png",overlay:"https://i.imgur.com/cPHvWTb.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"https://i.imgur.com/S77YoN3.png",correct:true,applied:false,zIndex:4},{id:4,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"https://i.imgur.com/v5kUQPg.png",correct:true,applied:false,zIndex:3},{id:5,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:false,applied:false,zIndex:6}],5:[{id:1,thumbnail:"https://i.imgur.com/NnWSEdz.png",overlay:"https://i.imgur.com/ImnVVaf.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"https://i.imgur.com/IMelM9Q.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Z5ojhhi.png",overlay:"https://i.imgur.com/3KX2VD4.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:false,applied:false,zIndex:6}],6:[{id:1,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"https://i.imgur.com/fdH4wzC.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/F1PF0tE.png",overlay:"https://i.imgur.com/Gctejg5.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/n6iJRus.png",overlay:"https://i.imgur.com/oAQe9gI.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"",correct:false,applied:false,zIndex:6}],7:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:6}]};
@@ -168,12 +167,10 @@
 
     /* ---------- 페이지 초기화 ---------- */
     function initPage(num){
-      // overlay 제거
       const cont=$(`#page${num} .worker-container`);cont.querySelectorAll('.overlay').forEach(o=>o.remove());
-      // applied 리셋
       pageGearData[num].forEach(i=>i.applied=false);
-      // 썸네일
-      const grid=$(`#gear-grid-${num}`);grid.innerHTML='';shuffle([...pageGearData[num]]).forEach(item=>{
+      const grid=$(`#gear-grid-${num}`);grid.innerHTML='';
+      shuffle([...pageGearData[num]]).forEach(item=>{
         const div=document.createElement('div');div.className='gear-item';
         const img=document.createElement('img');img.src=item.thumbnail;img.className='rounded-border';
         img.onclick=()=>gearClick(item,img,num);div.appendChild(img);grid.appendChild(div);
@@ -189,10 +186,10 @@
         item.applied=!item.applied;img.style.opacity=item.applied?0.5:1;
         item.applied?addOv(item,n):rmOv(item,n);
       }else{
-        const e=$(`#error-message-${n}`);e.textContent='올바르지 않은 보호구입니다.';setTimeout(()=>e.textContent='',2000);
+        const err=$(`#error-message-${n}`);err.textContent='올바르지 않은 보호구입니다.';setTimeout(()=>err.textContent='',2000);
       }
       const done=pageGearData[n].filter(i=>i.correct).every(i=>i.applied);
-      $(`#next-button-${n}`).disabled=!done;if(done)updateScore();
+      $(`#next-button-${n}`).disabled=!done;
     }
     function addOv(item,n){if(!item.overlay)return;const o=document.createElement('img');o.src=item.overlay;o.className='overlay';o.dataset.id=item.id;o.style.cssText=`position:absolute;top:0;left:0;width:100%;height:100%;z-index:${item.zIndex}`;$(`#page${n} .worker-container`).appendChild(o);}
     function rmOv(item,n){const o=$(`#page${n} .overlay[data-id="${item.id}"]`);o&&o.remove();}
@@ -200,9 +197,11 @@
     /* ---------- Next 버튼 ---------- */
     function bindNext(){[3,4,5,6,7].forEach(p=>{$(`#next-button-${p}`).onclick=()=>nextPage(p);});}
     function nextPage(cur){
+      updateScore();                      /* ← 1페이지 완료 시점에 점수 +1 */
       currentSequenceIndex++;
       if(currentSequenceIndex>=gameSequence.length){showEndButtons(cur);return;}
-      const nxt=gameSequence[currentSequenceIndex];setChances();showPage(`page${nxt}`);initPage(nxt);
+      const nxt=gameSequence[currentSequenceIndex];
+      setChances();showPage(`page${nxt}`);initPage(nxt);
     }
     function showEndButtons(p){$(`#button-container-${p}`).innerHTML=`<button class="button" onclick="goToPage8()">다음</button><button class="restart-button" onclick="newCycle()">다시 학습하기</button>`;}
 
@@ -223,15 +222,15 @@
     }
 
     /* ---------- 랭킹 ---------- */
-    const wKey=()=>{const d=new Date(new Date().getTime()+9*3600*1000);d.setDate(d.getDate()-d.getDay());d.setHours(0,0,0,0);return d.toISOString().slice(0,10);}
+    const weekKey=()=>{const d=new Date(new Date().getTime()+9*3600*1000);d.setDate(d.getDate()-d.getDay());d.setHours(0,0,0,0);return d.toISOString().slice(0,10);}
     async function saveScore(){
       const data={name:$('#workerName').value,siteName:$('#siteName').value,affiliation:$('#workerAffiliation').value,score:currentScore,timestamp:new Date()};
-      try{if(db){await fSave(data);await fLoad();}else{lSave(data);lLoad();}}catch{lSave(data);lLoad();}
+      try{if(db){await fsSave(data);await fsLoad();}else{lsSave(data);lsLoad();}}catch{lsSave(data);lsLoad();}
     }
-    async function fSave(d){const ref=db.collection('rankings').doc(wKey());const snap=await ref.get();let arr=snap.exists?snap.data().rankings:[];arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);await ref.set({rankings:arr});}
-    async function fLoad(){const snap=await db.collection('rankings').doc(wKey()).get();displayRank(snap.exists?snap.data().rankings:[]);}
-    function lSave(d){const k='rank_'+wKey();let arr=JSON.parse(localStorage.getItem(k)||'[]');arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);localStorage.setItem(k,JSON.stringify(arr));}
-    function lLoad(){const arr=JSON.parse(localStorage.getItem('rank_'+wKey())||'[]');displayRank(arr);}
+    async function fsSave(d){const ref=db.collection('rankings').doc(weekKey());const snap=await ref.get();let arr=snap.exists?snap.data().rankings:[];arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);await ref.set({rankings:arr});}
+    async function fsLoad(){const snap=await db.collection('rankings').doc(weekKey()).get();displayRank(snap.exists?snap.data().rankings:[]);}
+    function lsSave(d){const k='rank_'+weekKey();let arr=JSON.parse(localStorage.getItem(k)||'[]');arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);localStorage.setItem(k,JSON.stringify(arr));}
+    function lsLoad(){displayRank(JSON.parse(localStorage.getItem('rank_'+weekKey())||'[]'));}
     function displayRank(r){
       $('#ranking-loading').style.display='none';$('#ranking-table').style.display='table';const body=$('#ranking-body');body.innerHTML='';
       for(let i=0;i<5;i++){const row=body.insertRow();if(i<r.length){row.innerHTML=`<td>${i+1}</td><td>${r[i].name}</td><td>${r[i].siteName}</td><td>${r[i].affiliation}</td><td>${r[i].score}</td>`;}else row.innerHTML=`<td>${i+1}</td><td>-</td><td>-</td><td>-</td><td>-</td>`;}
