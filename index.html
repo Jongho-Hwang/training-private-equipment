@@ -5,8 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>작업별 보호구 착용 옷입히기 게임</title>
   <style>
-    body { margin: 0; padding: 0; font-family: sans-serif; }
-    .page { display: none; padding: 20px; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: sans-serif; 
+      overflow: hidden; /* 스크롤 방지 */
+      height: 100vh; /* 화면 전체 높이 */
+    }
+    .page { 
+      display: none; 
+      position: absolute; /* 절대 위치로 설정 */
+      top: 0;
+      left: 0;
+      width: 100vw; /* 화면 전체 너비 */
+      height: 100vh; /* 화면 전체 높이 */
+      overflow-y: auto; /* 페이지 내용이 길 경우 스크롤 */
+      box-sizing: border-box;
+    }
     .active { display: block; }
     .center { text-align: center; }
     /* 얇은 검정색 둥근 테두리 (애플 아이콘 스타일) */
@@ -18,11 +33,13 @@
     #page1 {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
     }
     
     #page1 .center {
@@ -70,7 +87,7 @@
     #page2 { 
       text-align: center; 
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -171,6 +188,22 @@
       width: 100%;
       text-align: center;
     }
+    
+    /* 게임 페이지 레이아웃 */
+    #page3, #page4, #page5, #page6, #page7 {
+      padding: 20px;
+      background: #f5f5f7;
+      height: 100vh;
+      box-sizing: border-box;
+    }
+    
+    #page3 h2, #page4 h2, #page5 h2, #page6 h2, #page7 h2 {
+      text-align: center;
+      color: #1d1d1f;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
     /* 근로자 이미지는 컨테이너 폭에 맞게 100%로 표시 */
     .worker-image {
       width: 100%;
@@ -243,14 +276,14 @@
     /* 페이지8 스타일 - 애플 스타일 */
     #page8 {
       background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-      min-height: 100vh;
+      height: 100vh;
       padding: 40px 20px;
       box-sizing: border-box;
     }
     
     .certificate-container {
       max-width: 800px;
-      margin: 0 auto;
+      margin: 0 auto 40px auto;
     }
     
     #page8 h2 {
@@ -267,7 +300,7 @@
       border: none;
       border-radius: 20px;
       padding: 40px;
-      margin: 0 0 40px 0;
+      margin: 0;
       text-align: center;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       position: relative;
@@ -314,7 +347,8 @@
       backdrop-filter: blur(20px);
       border-radius: 20px;
       padding: 30px;
-      margin: 30px 0;
+      margin: 30px auto;
+      max-width: 800px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
@@ -603,7 +637,7 @@
 
   <!-- 페이지8: 수료증 화면 -->
   <div id="page8" class="page">
-    <div class="certificate-container">
+    <div class="certificate-container" id="certificate-area">
       <h2>🎓 수료증</h2>
       
       <div id="certificate-box">
@@ -613,31 +647,31 @@
         <div id="final-score-display">최종 점수: <span id="final-score">0</span>점</div>
         <p class="completion-message">보호구 교육을 모두 수료하셨습니다.</p>
       </div>
+    </div>
       
-      <div class="action-section">
-        <p>관리자에게 수료증 화면을 보여주세요</p>
-        <div class="button-group-modern">
-          <button class="apple-button primary" id="saveCert">수료증 저장하기</button>
-          <button class="apple-button secondary" id="homeButton">홈으로 돌아가기</button>
-        </div>
-        
-        <div class="ranking-section">
-          <h3>🏆 이번 주 랭킹</h3>
-          <div id="ranking-loading" class="loading">랭킹을 불러오는 중...</div>
-          <table id="ranking-table" class="ranking-table" style="display: none;">
-            <thead>
-              <tr>
-                <th>순위</th>
-                <th>근로자 이름</th>
-                <th>현장명</th>
-                <th>소속</th>
-                <th>점수</th>
-              </tr>
-            </thead>
-            <tbody id="ranking-body">
-            </tbody>
-          </table>
-        </div>
+    <div class="action-section">
+      <p>관리자에게 수료증 화면을 보여주세요</p>
+      <div class="button-group-modern">
+        <button class="apple-button primary" id="saveCert">수료증 저장하기</button>
+        <button class="apple-button secondary" id="homeButton">홈으로 돌아가기</button>
+      </div>
+      
+      <div class="ranking-section">
+        <h3>🏆 이번 주 랭킹</h3>
+        <div id="ranking-loading" class="loading">랭킹을 불러오는 중...</div>
+        <table id="ranking-table" class="ranking-table" style="display: none;">
+          <thead>
+            <tr>
+              <th>순위</th>
+              <th>근로자 이름</th>
+              <th>현장명</th>
+              <th>소속</th>
+              <th>점수</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body">
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -783,12 +817,12 @@
         
         if (remainingChances < 0) {
           // 허용된 클릭 수를 초과한 경우 게임 종료
-          console.log('💀보호구 착용에 실패했습니다💀');
+          console.log('💀보호구를 모두 착용하지 못했습니다💀');
           setTimeout(() => {
             if (cycleCount === 2) {
-              alert(`💀보호구 착용에 실패했습니다💀\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
+              alert(`💀보호구를 모두 착용하지 못했습니다💀\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
             } else {
-              alert(`💀보호구 착용에 실패했습니다💀\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
+              alert(`💀보호구를 모두 착용하지 못했습니다💀\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
             }
             goToPage8();
           }, 500);
@@ -1233,12 +1267,30 @@
     }
 
     document.getElementById('saveCert').addEventListener('click', function() {
-      const certificateBox = document.getElementById('certificate-box');
-      html2canvas(certificateBox).then(canvas => {
+      // 수료증 전체 영역(제목 포함) 캡처
+      const certificateArea = document.getElementById('certificate-area');
+      
+      // 캡처를 위해 임시로 배경을 흰색으로 설정
+      const originalBackground = certificateArea.style.background;
+      certificateArea.style.background = 'white';
+      certificateArea.style.padding = '40px';
+      certificateArea.style.borderRadius = '20px';
+      
+      html2canvas(certificateArea, {
+        backgroundColor: 'white',
+        scale: 2, // 고화질 캡처
+        useCORS: true
+      }).then(canvas => {
         const link = document.createElement('a');
-        link.download = 'certificate.png';
+        const workerName = document.getElementById('workerName').value || '근로자';
+        link.download = `${workerName}_보호구교육_수료증.png`;
         link.href = canvas.toDataURL();
         link.click();
+        
+        // 원래 스타일 복원
+        certificateArea.style.background = originalBackground;
+        certificateArea.style.padding = '';
+        certificateArea.style.borderRadius = '';
       });
     });
 
