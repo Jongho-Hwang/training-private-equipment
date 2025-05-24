@@ -456,6 +456,46 @@
       showPage('page2');
     });
 
+    // 필수 유틸리티 함수들
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(function(page) {
+        page.classList.remove('active');
+      });
+      document.getElementById(pageId).classList.add('active');
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // 오버레이 관리 함수들
+    function addOverlayImage(item, pageNum) {
+      if(!item.overlay) return;
+      
+      const workerContainer = document.querySelector(`#page${pageNum} .worker-container`);
+      const overlayImg = document.createElement('img');
+      overlayImg.src = item.overlay;
+      overlayImg.className = 'overlay';
+      overlayImg.dataset.id = item.id;
+      overlayImg.style.position = 'absolute';
+      overlayImg.style.top = '0';
+      overlayImg.style.left = '0';
+      overlayImg.style.width = '100%';
+      overlayImg.style.height = '100%';
+      overlayImg.style.zIndex = item.zIndex || 1;
+      workerContainer.appendChild(overlayImg);
+    }
+
+    function removeOverlayImage(item, pageNum) {
+      const workerContainer = document.querySelector(`#page${pageNum} .worker-container`);
+      const overlay = workerContainer.querySelector(`img.overlay[data-id="${item.id}"]`);
+      if(overlay) overlay.remove();
+    }
+
     // 게임 시작 (완전히 새로 작성)
     document.getElementById('toPage3').addEventListener('click', function() {
       if(document.getElementById('siteName').value.trim() === '' || 
@@ -860,6 +900,12 @@
       }
     }
 
+    // 초기 이벤트 바인딩 (페이지 로드 완료 후)
+    document.addEventListener('DOMContentLoaded', function() {
+      debugLog('📄 페이지 로드 완료 - 이벤트 바인딩');
+      bindNextButtonEvents();
+    });
+
     document.getElementById('saveCert').addEventListener('click', function() {
       const certificateBox = document.getElementById('certificate-box');
       html2canvas(certificateBox).then(canvas => {
@@ -870,8 +916,165 @@
       });
     });
 
-    // 초기 이벤트 바인딩
-    bindNextButtonEvents();
+    // 기타 이벤트 리스너들
+    document.getElementById('startButton').addEventListener('click', function() {
+      showPage('page2');
+    });
+
+    document.getElementById('homeButton').addEventListener('click', function() {
+      location.reload();
+    });
+
+    document.getElementById('saveCert').addEventListener('click', function() {
+      const certificateBox = document.getElementById('certificate-box');
+      html2canvas(certificateBox).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'certificate.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+
+    // 점수 저장 및 랭킹 로드
+    async function saveScoreAndLoadRanking() {
+      const playerData = {
+        name: document.getElementById('workerName').value,
+        siteName: document.getElementById('siteName').value,
+        affiliation: document.getElementById('workerAffiliation').value,
+        score: currentScore,
+        timestamp: new Date()
+      };
+
+      try {
+        if (db) {
+          // Firestore 사용
+          await saveToFirestore(playerData);
+          await loadRankingFromFirestore();
+        } else {
+          // 로컬 스토리지 사용
+          saveToLocalStorage(playerData);
+          loadRankingFromLocalStorage();
+        }
+      } catch (error) {
+        console.error('점수 저장 실패:', error);
+        // Firestore 실패시 로컬 스토리지로 fallback
+        saveToLocalStorage(playerData);
+        loadRankingFromLocalStorage();
+      }
+    }
+
+    // Firestore에 저장
+    async function saveToFirestore(playerData) {
+      const weekId = getKoreanWeekId();
+      const rankingRef = db.collection('rankings').doc(weekId);
+      
+      const doc = await rankingRef.get();
+      let rankings = [];
+      
+      if (doc.exists) {
+        rankings = doc.data().rankings || [];
+      }
+      
+      // 현재 플레이어 점수가 상위 5명에 들어가는지 확인
+      rankings.push(playerData);
+      rankings.sort((a, b) => b.score - a.score);
+      
+      if (rankings.length > 5) {
+        rankings = rankings.slice(0, 5); // 상위 5명만 유지
+      }
+      
+      await rankingRef.set({ rankings: rankings });
+    }
+
+    // Firestore에서 랭킹 로드
+    async function loadRankingFromFirestore() {
+      const weekId = getKoreanWeekId();
+      const rankingRef = db.collection('rankings').doc(weekId);
+      
+      const doc = await rankingRef.get();
+      let rankings = [];
+      
+      if (doc.exists) {
+        rankings = doc.data().rankings || [];
+      }
+      
+      displayRanking(rankings);
+    }
+
+    // 로컬 스토리지에 저장
+    function saveToLocalStorage(playerData) {
+      const weekId = getKoreanWeekId();
+      const key = `rankings_${weekId}`;
+      let rankings = JSON.parse(localStorage.getItem(key) || '[]');
+      
+      rankings.push(playerData);
+      rankings.sort((a, b) => b.score - a.score);
+      
+      if (rankings.length > 5) {
+        rankings = rankings.slice(0, 5); // 상위 5명만 유지
+      }
+      
+      localStorage.setItem(key, JSON.stringify(rankings));
+    }
+
+    // 로컬 스토리지에서 랭킹 로드
+    function loadRankingFromLocalStorage() {
+      const weekId = getKoreanWeekId();
+      const key = `rankings_${weekId}`;
+      const rankings = JSON.parse(localStorage.getItem(key) || '[]');
+      displayRanking(rankings);
+    }
+
+    // 한국시간 기준 주차 ID 생성 (일요일 24시에 초기화)
+    function getKoreanWeekId() {
+      // 한국시간 (UTC+9) 계산
+      const now = new Date();
+      const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+      
+      // 해당 주의 일요일 찾기
+      const sunday = new Date(koreanTime);
+      sunday.setDate(koreanTime.getDate() - koreanTime.getDay());
+      sunday.setHours(0, 0, 0, 0);
+      
+      const year = sunday.getFullYear();
+      const month = String(sunday.getMonth() + 1).padStart(2, '0');
+      const day = String(sunday.getDate()).padStart(2, '0');
+      
+      return `${year}-${month}-${day}`;
+    }
+
+    // 랭킹 표시
+    function displayRanking(rankings) {
+      document.getElementById('ranking-loading').style.display = 'none';
+      document.getElementById('ranking-table').style.display = 'table';
+      
+      const tbody = document.getElementById('ranking-body');
+      tbody.innerHTML = '';
+      
+      for (let i = 0; i < 5; i++) {
+        const row = tbody.insertRow();
+        const rank = i + 1;
+        
+        if (i < rankings.length) {
+          const ranking = rankings[i];
+          row.innerHTML = `
+            <td>${rank}</td>
+            <td>${ranking.name}</td>
+            <td>${ranking.siteName}</td>
+            <td>${ranking.affiliation}</td>
+            <td>${ranking.score}</td>
+          `;
+        } else {
+          row.innerHTML = `
+            <td>${rank}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          `;
+        }
+      }
+    }
   </script>
 </body>
 </html>
