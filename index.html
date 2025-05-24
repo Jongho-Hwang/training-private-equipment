@@ -184,7 +184,25 @@
     <input type="text" id="workerAffiliation" placeholder="소속 입력"><br><br>
     <div class="blink">작업 상황에 따른 보호구 착용 기준을 옷입히기 게임 방식으로 학습합니다. 근로자 캐릭터 하단의 보호구를 클릭하여 올바른 보호구를 착용시켜주세요.</div>
     <br>
-    <button class="button" id="toPage3">다음</button>
+    <button class="button" id="toPage3" onclick="
+      console.log('🔘 다음 버튼 클릭됨');
+      
+      const siteName = document.getElementById('siteName').value.trim();
+      const workerName = document.getElementById('workerName').value.trim(); 
+      const workerAffiliation = document.getElementById('workerAffiliation').value.trim();
+      
+      console.log('입력값:', {siteName, workerName, workerAffiliation});
+      
+      if(siteName === '' || workerName === '' || workerAffiliation === '') {
+        alert('현장명, 근로자 이름, 소속을 모두 입력해주세요.');
+        return;
+      }
+      
+      console.log('페이지3으로 이동 시도');
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page3').classList.add('active');
+      console.log('페이지3으로 이동 완료');
+    ">다음</button>
   </div>
 
   <!-- 페이지3: 고소작업시 필수착용 개인보호구 -->
@@ -365,11 +383,44 @@
     let cycleCount = 1;
     let remainingChances = Infinity;
     
+    // 게임 상태 변수 (간소화)
+    let currentScore = 0;
+    let gameSequence = [3, 4, 5, 6, 7];
+    let currentSequenceIndex = 0;
+    let hasCompletedFirstCycle = false;
+    let cycleCount = 1;
+    let remainingChances = Infinity;
+    
     // 디버그 모드
     const DEBUG = true;
     function debugLog(message) {
       if (DEBUG) console.log(message);
     }
+
+    // 전역 함수들 (HTML onclick에서 접근 가능)
+    function handleToPage3Click() {
+      debugLog('🔘 페이지2 다음 버튼 클릭 (onclick)');
+      
+      const siteName = document.getElementById('siteName').value.trim();
+      const workerName = document.getElementById('workerName').value.trim();
+      const workerAffiliation = document.getElementById('workerAffiliation').value.trim();
+      
+      debugLog(`📝 입력값 확인 - 현장명: "${siteName}", 이름: "${workerName}", 소속: "${workerAffiliation}"`);
+      
+      if(siteName === '' || workerName === '' || workerAffiliation === '') {
+        alert('현장명, 근로자 이름, 소속을 모두 입력해주세요.');
+        return;
+      }
+      
+      debugLog('✅ 입력값 검증 통과 - 게임 시작');
+      startGame();
+    }
+    
+    // 전역으로 노출 (HTML onclick에서 접근 가능)
+    window.handleToPage3Click = handleToPage3Click;
+    window.goToPage8 = goToPage8;
+    window.startNextCycle = startNextCycle;
+    window.startGame = startGame;
 
     // 기회 관리 함수들 (단순화)
     function initializeCycleChances() {
@@ -900,11 +951,10 @@
       }
     }
 
-    // 초기 이벤트 바인딩 (페이지 로드 완료 후)
-    document.addEventListener('DOMContentLoaded', function() {
-      debugLog('📄 페이지 로드 완료 - 이벤트 바인딩');
-      bindNextButtonEvents();
-    });
+    // 초기 이벤트 바인딩 (페이지 로드 완료 후) - 백업
+    if (!document.querySelector('[data-event-bound]')) {
+      document.body.setAttribute('data-event-bound', 'true');
+    }
 
     document.getElementById('saveCert').addEventListener('click', function() {
       const certificateBox = document.getElementById('certificate-box');
