@@ -11,13 +11,10 @@
     .center{text-align:center}
     .rounded-border{border:1px solid #000;border-radius:10px}
     .button{padding:10px 20px;margin:10px;font-size:16px;cursor:pointer}
-    /* page1 mobile full‑screen */
     #page1{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;padding:0}
     #page1 img{width:90vw;max-width:320px;height:auto}
     #page1 .button{width:80vw;max-width:220px}
-    /* form inputs */
     #page2 input{width:100%;padding:8px;box-sizing:border-box;margin-top:4px;margin-bottom:16px}
-    /* gear pages */
     .worker-container{position:relative;width:100%}
     .worker-container img{width:100%;height:auto;display:block;margin:0 auto}
     .gear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
@@ -34,7 +31,7 @@
     <button class="button" onclick="goPage(2)">교육 시작하기</button>
   </div>
 
-  <!-- page2 입력 -->
+  <!-- page2 -->
   <div id="page2" class="page">
     <h2>교육 정보 입력</h2>
     <label>현장명:</label>
@@ -47,7 +44,7 @@
     <button class="button" onclick="toGearStart()">다음</button>
   </div>
 
-  <!-- gear template pages 3‑7 -->
+  <!-- gear template pages 3‑7 (structure identical) -->
   <div id="page3" class="page gear-page">
     <h2 class="gear-heading">일반작업 시 고소작업 시 필수착용 개인보호구</h2>
     <div class="worker-container"></div>
@@ -105,7 +102,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-// -------------------- 데이터 정의 --------------------
+// ---------------- data ----------------
 const gearData={
   3:{workerImg:'https://i.imgur.com/Ifwwzoz.png',items:[
       {id:1,thumb:'https://i.imgur.com/yvsCOBF.png',overlay:'https://i.imgur.com/yTJe79p.png',correct:true,z:3},
@@ -134,49 +131,4 @@ const gearData={
   6:{workerImg:'https://i.imgur.com/Ifwwzoz.png',items:[
       {id:1,thumb:'https://i.imgur.com/fdH4wzC.png',overlay:'https://i.imgur.com/fdH4wzC.png',correct:true,z:1},
       {id:2,thumb:'https://i.imgur.com/yvsCOBF.png',overlay:'https://i.imgur.com/yTJe79p.png',correct:true,z:2},
-      {id:3,thumb:'https://i.imgur.com/F1PF0tE.png',overlay:'https://i.imgur.com/Gctejg5.png',correct:true,z:3},
-      {id:4,thumb:'https://i.imgur.com/n6iJRus.png',overlay:'https://i.imgur.com/oAQe9gI.png',correct:true,z:4},
-      {id:5,thumb:'https://i.imgur.com/d7Plzcn.png',overlay:'https://i.imgur.com/5VxjKY6.png',correct:true},
-      {id:6,thumb:'https://i.imgur.com/NdbXUPl.png',overlay:'',correct:false}
-  ]},
-  7:{workerImg:'https://i.imgur.com/Ifwwzoz.png',items:[
-      {id:1,thumb:'https://i.imgur.com/yvsCOBF.png',overlay:'https://i.imgur.com/yTJe79p.png',correct:true},
-      {id:2,thumb:'https://i.imgur.com/nvoxlp7.png',overlay:'https://i.imgur.com/VfJMtc3.png',correct:true},
-      {id:3,thumb:'https://i.imgur.com/d7Plzcn.png',overlay:'https://i.imgur.com/5VxjKY6.png',correct:true},
-      {id:4,thumb:'https://i.imgur.com/m1GZRHc.png',overlay:'https://i.imgur.com/Cphm4b5.png',correct:true},
-      {id:5,thumb:'https://i.imgur.com/Cbcyknu.png',overlay:'',correct:false},
-      {id:6,thumb:'https://i.imgur.com/Ui2tbVv.png',overlay:'',correct:false}
-  ]}
-};
-
-//------------------------------------------------------
-function goPage(num){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page'+num).classList.add('active');if(num>=3&&num<=7){initGearPage(num);}if(num===8){showCertificate();}}
-
-function toGearStart(){const err=document.getElementById('form-error');if(!siteName.value.trim()||!workerName.value.trim()||!workerAffiliation.value.trim()){err.textContent='모든 정보를 입력해주세요.';return;}err.textContent='';goPage(3);}
-
-function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
-
-function initGearPage(pg){const data=gearData[pg];const page=document.getElementById('page'+pg);const container=page.querySelector('.worker-container');const grid=page.querySelector('.gear-grid');const err=page.querySelector('.error-message');const btn=document.getElementById('btn'+pg);
-  container.innerHTML(`<img src="${data.workerImg}" class="rounded-border" alt="근로자">`);
-  grid.innerHTML='';err.textContent='';btn.disabled=true;
-  const shuffled=shuffle([...data.items]);
-  shuffled.forEach(item=>{item.applied=false;const div=document.createElement('div');div.className='gear-item';const img=document.createElement('img');img.src=item.thumb;img.className='rounded-border';img.addEventListener('click',()=>toggleItem(page,pg,item,img));div.appendChild(img);grid.appendChild(div);});
-  // remove any lingering overlays
-  page.querySelectorAll('.overlay').forEach(o=>o.remove());
-}
-
-function toggleItem(page,pg,item,img){const err=page.querySelector('.error-message');if(!item.correct){err.textContent='올바른 보호구가 아닙니다.';setTimeout(()=>err.textContent='',2000);return;}
-  item.applied=!item.applied;img.style.opacity=item.applied?0.5:1;if(item.applied)addOverlay(page,item);else removeOverlay(page,item);checkAll(pg);
-}
-
-function addOverlay(page,item){if(!item.overlay)return;const c=page.querySelector('.worker-container');const ov=document.createElement('img');ov.src=item.overlay;ov.className='overlay rounded-border';ov.dataset.id=item.id;ov.style.position='absolute';ov.style.width='100%';ov.style.height='100%';ov.style.top='0';ov.style.left='0';if(item.z)ov.style.zIndex=item.z;c.appendChild(ov);}
-
-function removeOverlay(page,item){const ov=page.querySelector(`img.overlay[data-id='${item.id}']`);if(ov)ov.remove();}
-
-function checkAll(pg){const data=gearData[pg];const all=data.items.filter(i=>i.correct).every(i=>i.applied);document.getElementById('btn'+pg).disabled=!all;}
-
-function showCertificate(){cert-site.textContent=siteName.value;cert-worker.textContent=workerName.value;cert-affiliation.textContent=workerAffiliation.value;}
-
-function saveCert(){html2canvas(document.getElementById('certificate-box')).then(canvas=>{const link(document.createElement('a'));link.download='certificate.png';link.href=canvas.toDataURL();link.click();});}
-</script>
-</body></html>
+      {id:3,thumb:'https://
