@@ -59,7 +59,70 @@
     </div>
   </div>
 
-  <!-- 페이지3-7: 기존 레이아웃 유지 -->
+  <!-- 페이지3: 고소작업시 필수착용 개인보호구 -->
+  <div id="page3" class="page">
+    <h2 style="font-size:22px; font-weight:600; color:#000; text-align:center;">고소작업시 필수착용 개인보호구</h2>
+    <div class="worker-container center">
+      <img class="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
+    </div>
+    <div class="gear-grid" id="gear-grid-3"></div>
+    <div class="error-message" id="error-message-3"></div>
+    <div class="center button-group">
+      <button class="apple-button" id="next-button-3" disabled>다음</button>
+    </div>
+  </div>
+
+  <!-- 페이지4: 용접작업시 필수착용 개인보호구 -->
+  <div id="page4" class="page">
+    <h2 style="font-size:22px; font-weight:600; color:#000; text-align:center;">용접작업시 필수착용 개인보호구</h2>
+    <div class="worker-container center">
+      <img class="worker-image" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지">
+    </div>
+    <div class="gear-grid" id="gear-grid-4"></div>
+    <div class="error-message" id="error-message-4"></div>
+    <div class="center button-group">
+      <button class="apple-button" id="next-button-4" disabled>다음</button>
+    </div>
+  </div>
+
+  <!-- 페이지5: 정전작업시 필수착용 개인보호구 -->
+  <div id="page5" class="page">
+    <h2 style="font-size:22px; font-weight:600; color:#000; text-align:center;">정전작업시 필수착용 개인보호구</h2>
+    <div class="worker-container center">
+      <img class="worker-image" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지">
+    </div>
+    <div class="gear-grid" id="gear-grid-5"></div>
+    <div class="error-message" id="error-message-5"></div>
+    <div class="center button-group">
+      <button class="apple-button" id="next-button-5" disabled>다음</button>
+    </div>
+  </div>
+
+  <!-- 페이지6: 도장작업시 필수착용 개인보호구 -->
+  <div id="page6" class="page">
+    <h2 style="font-size:22px; font-weight:600; color:#000; text-align:center;">도장작업시 필수착용 개인보호구</h2>
+    <div class="worker-container center">
+      <img class="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
+    </div>
+    <div class="gear-grid" id="gear-grid-6"></div>
+    <div class="error-message" id="error-message-6"></div>
+    <div class="center button-group">
+      <button class="apple-button" id="next-button-6" disabled>다음</button>
+    </div>
+  </div>
+
+  <!-- 페이지7: 일반작업 공통착용 개인보호구 -->
+  <div id="page7" class="page">
+    <h2 style="font-size:22px; font-weight:600; color:#000; text-align:center;">일반작업 공통착용 개인보호구</h2>
+    <div class="worker-container center">
+      <img class="worker-image" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
+    </div>
+    <div class="gear-grid" id="gear-grid-7"></div>
+    <div class="error-message" id="error-message-7"></div>
+    <div class="center button-group">
+      <button class="apple-button" id="next-button-7" disabled>다음</button>
+    </div>
+  </div>
   <!-- ... (생략되지 않도록 실제 코드에 그대로 포함) -->
 
   <!-- 페이지8: 모던 애플 스타일 수료증 -->
@@ -92,6 +155,16 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // 페이지 전환 로직 추가
+    document.getElementById('startButton').addEventListener('click', function() {
+      document.getElementById('page1').classList.remove('active');
+      document.getElementById('page2').classList.add('active');
+    });
+    document.getElementById('toPage3').addEventListener('click', function() {
+      document.getElementById('page2').classList.remove('active');
+      document.getElementById('page3').classList.add('active');
+    });
+
     // 기존 JS 코드 그대로 유지하되, saveCert는 certificate-content만 캡처
     document.getElementById('saveCert').addEventListener('click', function() {
       const content = document.getElementById('certificate-content');
@@ -101,6 +174,12 @@
         link.href = canvas.toDataURL();
         link.click();
       });
+    });
+
+    // 홈 버튼
+    document.getElementById('homeButton').addEventListener('click', function() {
+      document.getElementById('page8').classList.remove('active');
+      document.getElementById('page1').classList.add('active');
     });
   </script>
 </body>
