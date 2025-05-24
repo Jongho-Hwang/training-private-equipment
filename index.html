@@ -184,25 +184,7 @@
     <input type="text" id="workerAffiliation" placeholder="소속 입력"><br><br>
     <div class="blink">작업 상황에 따른 보호구 착용 기준을 옷입히기 게임 방식으로 학습합니다. 근로자 캐릭터 하단의 보호구를 클릭하여 올바른 보호구를 착용시켜주세요.</div>
     <br>
-    <button class="button" id="toPage3" onclick="
-      console.log('🔘 다음 버튼 클릭됨');
-      
-      const siteName = document.getElementById('siteName').value.trim();
-      const workerName = document.getElementById('workerName').value.trim(); 
-      const workerAffiliation = document.getElementById('workerAffiliation').value.trim();
-      
-      console.log('입력값:', {siteName, workerName, workerAffiliation});
-      
-      if(siteName === '' || workerName === '' || workerAffiliation === '') {
-        alert('현장명, 근로자 이름, 소속을 모두 입력해주세요.');
-        return;
-      }
-      
-      console.log('페이지3으로 이동 시도');
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById('page3').classList.add('active');
-      console.log('페이지3으로 이동 완료');
-    ">다음</button>
+    <button class="button" id="toPage3">다음</button>
   </div>
 
   <!-- 페이지3: 고소작업시 필수착용 개인보호구 -->
@@ -375,131 +357,99 @@
       ]
     };
 
-    // 게임 상태 변수 (간소화)
+    // 게임 상태 변수
     let currentScore = 0;
-    let gameSequence = [3, 4, 5, 6, 7];
+    let gameSequence = [3, 4, 5, 6, 7]; // 기본 페이지 순서
     let currentSequenceIndex = 0;
     let hasCompletedFirstCycle = false;
-    let cycleCount = 1;
-    let remainingChances = Infinity;
-    
-    // 게임 상태 변수 (간소화)
-    let currentScore = 0;
-    let gameSequence = [3, 4, 5, 6, 7];
-    let currentSequenceIndex = 0;
-    let hasCompletedFirstCycle = false;
-    let cycleCount = 1;
-    let remainingChances = Infinity;
-    
-    // 디버그 모드
-    const DEBUG = true;
-    function debugLog(message) {
-      if (DEBUG) console.log(message);
+    let isInRandomCycle = false;
+    let cycleCount = 1; // 현재 사이클 횟수
+    let remainingChances = Infinity; // 남은 기회
+    let maxChancesPerCycle = {
+      1: Infinity, // 첫 번째 사이클: 무제한
+      2: 10,       // 두 번째 사이클: 10번
+      default: 5   // 세 번째 사이클 이후: 5번
+    };
+
+    // 점수 업데이트 함수
+    function updateScore() {
+      currentScore += 1;
+      document.getElementById('current-score').textContent = currentScore;
     }
 
-    // 전역 함수들 (HTML onclick에서 접근 가능)
-    function handleToPage3Click() {
-      debugLog('🔘 페이지2 다음 버튼 클릭 (onclick)');
-      
-      const siteName = document.getElementById('siteName').value.trim();
-      const workerName = document.getElementById('workerName').value.trim();
-      const workerAffiliation = document.getElementById('workerAffiliation').value.trim();
-      
-      debugLog(`📝 입력값 확인 - 현장명: "${siteName}", 이름: "${workerName}", 소속: "${workerAffiliation}"`);
-      
-      if(siteName === '' || workerName === '' || workerAffiliation === '') {
-        alert('현장명, 근로자 이름, 소속을 모두 입력해주세요.');
-        return;
-      }
-      
-      debugLog('✅ 입력값 검증 통과 - 게임 시작');
-      startGame();
+    // 점수 표시/숨김
+    function showScore() {
+      document.getElementById('score-display').style.display = 'block';
     }
-    
-    // 전역으로 노출 (HTML onclick에서 접근 가능)
-    window.handleToPage3Click = handleToPage3Click;
-    window.goToPage8 = goToPage8;
-    window.startNextCycle = startNextCycle;
-    window.startGame = startGame;
 
-    // 기회 관리 함수들 (단순화)
-    function initializeCycleChances() {
-      debugLog(`🔄 사이클 ${cycleCount} 기회 초기화`);
-      
-      if (cycleCount === 1) {
-        remainingChances = Infinity;
-        debugLog(`🟢 사이클 1: 무제한 기회`);
-      } else if (cycleCount === 2) {
-        remainingChances = 10;
-        debugLog(`🟡 사이클 2: 10번 기회`);
-      } else {
-        remainingChances = 5;
-        debugLog(`🔴 사이클 3+: 5번 기회`);
-      }
-      
-      updateChancesDisplay();
+    function hideScore() {
+      document.getElementById('score-display').style.display = 'none';
     }
-    
-    function updateChancesDisplay() {
+
+    // 기회 업데이트 함수
+    function updateChances() {
       const chancesElement = document.getElementById('remaining-chances');
       const chancesDisplay = document.getElementById('chances-display');
       
-      debugLog(`🔄 UI 업데이트: 사이클 ${cycleCount}, 기회 ${remainingChances}`);
-      
-      // 클래스 초기화
-      chancesDisplay.className = 'chances-display';
+      // 기존 클래스 제거
+      chancesDisplay.classList.remove('cycle-1', 'cycle-2', 'cycle-3-plus');
       
       if (remainingChances === Infinity) {
         chancesElement.textContent = '∞';
-        chancesDisplay.classList.add('cycle-1');
+        chancesDisplay.classList.add('cycle-1'); // 초록색
       } else if (cycleCount === 2) {
         chancesElement.textContent = remainingChances;
-        chancesDisplay.classList.add('cycle-2');
+        chancesDisplay.classList.add('cycle-2'); // 주황색
       } else {
         chancesElement.textContent = remainingChances;
-        chancesDisplay.classList.add('cycle-3-plus');
+        chancesDisplay.classList.add('cycle-3-plus'); // 빨간색
       }
-      
-      debugLog(`✅ UI 업데이트 완료: ${chancesElement.textContent}`);
     }
-    
-    function useChance() {
-      debugLog(`🎯 기회 사용 시도 - 현재: ${remainingChances}, 사이클: ${cycleCount}`);
-      
-      // 첫 번째 사이클은 기회 무제한
-      if (cycleCount === 1) {
-        debugLog(`🟢 첫 사이클 - 기회 차감 없음`);
-        return false; // 게임 종료 안됨
-      }
-      
-      // 두 번째 사이클부터 기회 차감
-      if (remainingChances > 0) {
+
+    // 기회 표시/숨김
+    function showChances() {
+      document.getElementById('chances-display').style.display = 'block';
+      updateChances();
+    }
+
+    function hideChances() {
+      document.getElementById('chances-display').style.display = 'none';
+    }
+
+    // 기회 차감
+    function decreaseChances() {
+      if (remainingChances !== Infinity && remainingChances > 0) {
         remainingChances--;
-        debugLog(`📉 기회 차감: ${remainingChances} 남음`);
-        updateChancesDisplay();
+        updateChances();
+        
+        console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`); // 디버그용
         
         if (remainingChances <= 0) {
-          debugLog(`💥 기회 소진! 게임 종료`);
-          endGameDueToNoChances();
+          // 기회 소진 시 게임 종료
+          console.log('💀 기회 소진으로 게임 종료'); // 디버그용
+          setTimeout(() => {
+            alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
+            goToPage8();
+          }, 500);
           return true; // 게임 종료됨
         }
       }
-      
       return false; // 게임 계속
     }
-    
-    function endGameDueToNoChances() {
-      // 모든 보호구 클릭 비활성화
-      document.querySelectorAll('.gear-item img').forEach(img => {
-        img.style.pointerEvents = 'none';
-        img.style.opacity = '0.3';
-      });
-      
-      // 짧은 지연 후 알림 및 페이지 이동
-      setTimeout(() => {
-        alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
-        goToPage8();
-      }, 200);
+
+    // 사이클별 기회 설정
+    function setChancesForCycle() {
+      if (cycleCount === 1) {
+        remainingChances = Infinity;
+        console.log(`🟢 사이클 ${cycleCount}: 무제한 기회 설정`); // 디버그용
+      } else if (cycleCount === 2) {
+        remainingChances = maxChancesPerCycle[2];
+        console.log(`🟡 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
+      } else {
+        remainingChances = maxChancesPerCycle.default;
+        console.log(`🔴 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
+      }
+      updateChances();
     }
 
     // 페이지 전환 이벤트
@@ -507,47 +457,6 @@
       showPage('page2');
     });
 
-    // 필수 유틸리티 함수들
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(function(page) {
-        page.classList.remove('active');
-      });
-      document.getElementById(pageId).classList.add('active');
-    }
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
-    }
-
-    // 오버레이 관리 함수들
-    function addOverlayImage(item, pageNum) {
-      if(!item.overlay) return;
-      
-      const workerContainer = document.querySelector(`#page${pageNum} .worker-container`);
-      const overlayImg = document.createElement('img');
-      overlayImg.src = item.overlay;
-      overlayImg.className = 'overlay';
-      overlayImg.dataset.id = item.id;
-      overlayImg.style.position = 'absolute';
-      overlayImg.style.top = '0';
-      overlayImg.style.left = '0';
-      overlayImg.style.width = '100%';
-      overlayImg.style.height = '100%';
-      overlayImg.style.zIndex = item.zIndex || 1;
-      workerContainer.appendChild(overlayImg);
-    }
-
-    function removeOverlayImage(item, pageNum) {
-      const workerContainer = document.querySelector(`#page${pageNum} .worker-container`);
-      const overlay = workerContainer.querySelector(`img.overlay[data-id="${item.id}"]`);
-      if(overlay) overlay.remove();
-    }
-
-    // 게임 시작 (완전히 새로 작성)
     document.getElementById('toPage3').addEventListener('click', function() {
       if(document.getElementById('siteName').value.trim() === '' || 
          document.getElementById('workerName').value.trim() === '' || 
@@ -556,22 +465,17 @@
         return;
       }
       
-      debugLog('🎮 ===== 게임 시작 =====');
-      
-      // 완전 초기화
+      // 게임 완전 초기화
       currentScore = 0;
       currentSequenceIndex = 0;
       hasCompletedFirstCycle = false;
+      isInRandomCycle = false;
       gameSequence = [3, 4, 5, 6, 7];
-      cycleCount = 1;
+      cycleCount = 1; // 첫 번째 사이클로 명시적 초기화
       
-      // 점수 및 기회 설정
-      document.getElementById('current-score').textContent = currentScore;
-      initializeCycleChances();
-      showScore();
-      showChances();
+      console.log('🎮 게임 시작 - 첫 번째 사이클 (무제한 기회)'); // 디버그용
       
-      // 모든 버튼 초기화
+      // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
         const buttonContainer = document.getElementById(`button-container-${i}`);
         if (buttonContainer) {
@@ -579,13 +483,15 @@
         }
       }
       
-      // 첫 페이지 시작
-      debugLog('🎯 첫 번째 페이지로 이동');
+      document.getElementById('current-score').textContent = currentScore;
+      setChancesForCycle(); // 첫 사이클 기회 설정 (무제한)
+      showScore();
+      showChances();
       showPage('page3');
       initializeGame(3);
-      bindNextButtonEvents();
       
-      debugLog('✅ 게임 시작 완료');
+      // 이벤트 리스너 다시 바인딩
+      bindNextButtonEvents();
     });
 
     // 다음 버튼 이벤트 바인딩 함수
@@ -670,11 +576,9 @@
 
     // 새로운 랜덤 사이클 시작
     function startNewRandomCycle() {
-      console.log(`🔄 사이클 증가: ${cycleCount} → ${cycleCount + 1}`);
-      
       // 사이클 카운트 증가
       cycleCount++;
-      console.log(`🆕 새로운 사이클 ${cycleCount} 시작!`);
+      console.log(`🔄 새로운 사이클 시작: ${cycleCount}`); // 디버그용
       
       isInRandomCycle = true;
       gameSequence = shuffle([3, 4, 5, 6, 7]);
@@ -683,7 +587,7 @@
       // 새 사이클 기회 설정
       setChancesForCycle();
       
-      console.log(`📊 사이클 ${cycleCount} 설정 완료 - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`);
+      console.log(`📊 사이클 ${cycleCount} - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`); // 디버그용
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -694,7 +598,6 @@
       }
       
       const firstPageNum = gameSequence[0];
-      console.log(`🎮 첫 번째 페이지로 이동: ${firstPageNum}`);
       showPage(`page${firstPageNum}`);
       initializeGame(firstPageNum);
       
@@ -806,8 +709,7 @@
     }
 
     function checkAllCorrectApplied(pageNum) {
-      // 호환성을 위해 새 함수로 리다이렉트
-      checkPageComplete(pageNum);
+      checkGameComplete(pageNum);
     }
 
     // 점수 저장 및 랭킹 로드
@@ -951,11 +853,6 @@
       }
     }
 
-    // 초기 이벤트 바인딩 (페이지 로드 완료 후) - 백업
-    if (!document.querySelector('[data-event-bound]')) {
-      document.body.setAttribute('data-event-bound', 'true');
-    }
-
     document.getElementById('saveCert').addEventListener('click', function() {
       const certificateBox = document.getElementById('certificate-box');
       html2canvas(certificateBox).then(canvas => {
@@ -966,165 +863,8 @@
       });
     });
 
-    // 기타 이벤트 리스너들
-    document.getElementById('startButton').addEventListener('click', function() {
-      showPage('page2');
-    });
-
-    document.getElementById('homeButton').addEventListener('click', function() {
-      location.reload();
-    });
-
-    document.getElementById('saveCert').addEventListener('click', function() {
-      const certificateBox = document.getElementById('certificate-box');
-      html2canvas(certificateBox).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'certificate.png';
-        link.href = canvas.toDataURL();
-        link.click();
-      });
-    });
-
-    // 점수 저장 및 랭킹 로드
-    async function saveScoreAndLoadRanking() {
-      const playerData = {
-        name: document.getElementById('workerName').value,
-        siteName: document.getElementById('siteName').value,
-        affiliation: document.getElementById('workerAffiliation').value,
-        score: currentScore,
-        timestamp: new Date()
-      };
-
-      try {
-        if (db) {
-          // Firestore 사용
-          await saveToFirestore(playerData);
-          await loadRankingFromFirestore();
-        } else {
-          // 로컬 스토리지 사용
-          saveToLocalStorage(playerData);
-          loadRankingFromLocalStorage();
-        }
-      } catch (error) {
-        console.error('점수 저장 실패:', error);
-        // Firestore 실패시 로컬 스토리지로 fallback
-        saveToLocalStorage(playerData);
-        loadRankingFromLocalStorage();
-      }
-    }
-
-    // Firestore에 저장
-    async function saveToFirestore(playerData) {
-      const weekId = getKoreanWeekId();
-      const rankingRef = db.collection('rankings').doc(weekId);
-      
-      const doc = await rankingRef.get();
-      let rankings = [];
-      
-      if (doc.exists) {
-        rankings = doc.data().rankings || [];
-      }
-      
-      // 현재 플레이어 점수가 상위 5명에 들어가는지 확인
-      rankings.push(playerData);
-      rankings.sort((a, b) => b.score - a.score);
-      
-      if (rankings.length > 5) {
-        rankings = rankings.slice(0, 5); // 상위 5명만 유지
-      }
-      
-      await rankingRef.set({ rankings: rankings });
-    }
-
-    // Firestore에서 랭킹 로드
-    async function loadRankingFromFirestore() {
-      const weekId = getKoreanWeekId();
-      const rankingRef = db.collection('rankings').doc(weekId);
-      
-      const doc = await rankingRef.get();
-      let rankings = [];
-      
-      if (doc.exists) {
-        rankings = doc.data().rankings || [];
-      }
-      
-      displayRanking(rankings);
-    }
-
-    // 로컬 스토리지에 저장
-    function saveToLocalStorage(playerData) {
-      const weekId = getKoreanWeekId();
-      const key = `rankings_${weekId}`;
-      let rankings = JSON.parse(localStorage.getItem(key) || '[]');
-      
-      rankings.push(playerData);
-      rankings.sort((a, b) => b.score - a.score);
-      
-      if (rankings.length > 5) {
-        rankings = rankings.slice(0, 5); // 상위 5명만 유지
-      }
-      
-      localStorage.setItem(key, JSON.stringify(rankings));
-    }
-
-    // 로컬 스토리지에서 랭킹 로드
-    function loadRankingFromLocalStorage() {
-      const weekId = getKoreanWeekId();
-      const key = `rankings_${weekId}`;
-      const rankings = JSON.parse(localStorage.getItem(key) || '[]');
-      displayRanking(rankings);
-    }
-
-    // 한국시간 기준 주차 ID 생성 (일요일 24시에 초기화)
-    function getKoreanWeekId() {
-      // 한국시간 (UTC+9) 계산
-      const now = new Date();
-      const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
-      
-      // 해당 주의 일요일 찾기
-      const sunday = new Date(koreanTime);
-      sunday.setDate(koreanTime.getDate() - koreanTime.getDay());
-      sunday.setHours(0, 0, 0, 0);
-      
-      const year = sunday.getFullYear();
-      const month = String(sunday.getMonth() + 1).padStart(2, '0');
-      const day = String(sunday.getDate()).padStart(2, '0');
-      
-      return `${year}-${month}-${day}`;
-    }
-
-    // 랭킹 표시
-    function displayRanking(rankings) {
-      document.getElementById('ranking-loading').style.display = 'none';
-      document.getElementById('ranking-table').style.display = 'table';
-      
-      const tbody = document.getElementById('ranking-body');
-      tbody.innerHTML = '';
-      
-      for (let i = 0; i < 5; i++) {
-        const row = tbody.insertRow();
-        const rank = i + 1;
-        
-        if (i < rankings.length) {
-          const ranking = rankings[i];
-          row.innerHTML = `
-            <td>${rank}</td>
-            <td>${ranking.name}</td>
-            <td>${ranking.siteName}</td>
-            <td>${ranking.affiliation}</td>
-            <td>${ranking.score}</td>
-          `;
-        } else {
-          row.innerHTML = `
-            <td>${rank}</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-          `;
-        }
-      }
-    }
+    // 초기 이벤트 바인딩
+    bindNextButtonEvents();
   </script>
 </body>
 </html>
