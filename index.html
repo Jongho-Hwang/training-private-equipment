@@ -5,16 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>작업별 보호구 착용 옷입히기 게임</title>
   <style>
-    /* === 기본 세팅 === */
+    /* ===== 공통 ===== */
     *{box-sizing:border-box}
     body{margin:0;padding:0;font-family:sans-serif}
-
-    /* 페이지 기본·활성 */
     .page{display:none;width:100%;padding:20px}
     .page.active{display:block}
     .flex-page.active{display:flex;justify-content:center;align-items:center;min-height:100vh}
-
-    /* 공통 카드 / 버튼 */
     .card{background:#fff;border-radius:20px;box-shadow:0 15px 25px rgba(0,0,0,.1);padding:40px;width:100%;max-width:600px;margin:0 auto}
     .button{padding:12px 24px;margin:10px;font-size:16px;cursor:pointer;color:#fff;border:none;border-radius:8px;background:linear-gradient(135deg,#007bff 0%,#0063ff 100%);box-shadow:0 4px 12px rgba(0,0,0,.15);transition:transform .1s}
     .button:hover{transform:translateY(-2px)}
@@ -22,27 +18,27 @@
     .restart-button:hover{transform:translateY(-2px)}
     .rounded-border{border:1px solid #000;border-radius:10px}
 
-    /* 배경 */
+    /* ===== 배경 ===== */
     #page1{background:linear-gradient(135deg,#7b5dff 0%,#4a8dff 100%)}
     #page2{background:radial-gradient(circle at top left,#f3f3f5 0%,#e9e9eb 100%)}
     #page8{background:linear-gradient(135deg,#b6f0e8 0%,#d3ecf6 50%,#ffd6e6 100%)}
 
-    /* 페이지1 */
+    /* ===== 페이지1 ===== */
     #page1 .card{display:flex;flex-direction:column;align-items:center}
     #page1 h1{white-space:nowrap;margin:0 0 24px 0}
     #page1 img{max-width:100%;height:auto}
 
-    /* 페이지2 */
+    /* ===== 페이지2 ===== */
     .blink{color:red}
     #page2 .card input{width:100%;padding:12px;border:1px solid #ddd;border-radius:6px;font-size:16px}
 
-    /* 페이지3~7 */
+    /* ===== 페이지3~7 ===== */
     .worker-container{position:relative;width:100%;text-align:center}
     .worker-image{width:100%;height:auto;display:block;margin:0 auto}
     .gear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
     .gear-item img{width:80%;display:block;cursor:pointer;margin:0 auto}
 
-    /* 점수·기회 표시 */
+    /* ===== 점수·기회 표시 ===== */
     .score-display,.chances-display{position:fixed;right:10px;z-index:1000;min-width:115px;padding:10px;border-radius:5px;font-weight:bold;text-align:center}
     .score-display{bottom:60px;background:#f0f0f0;border:1px solid #ccc}
     .chances-display{bottom:10px}
@@ -50,7 +46,7 @@
     .cycle-2{background:#fff3e0!important;border:2px solid #ff9800!important;color:#e65100!important}
     .cycle-3-plus{background:#ffebee!important;border:2px solid #f44336!important;color:#d32f2f!important}
 
-    /* 페이지8 */
+    /* ===== 페이지8 ===== */
     #certificate-box{border:2px solid #000;padding:20px;border-radius:12px;text-align:center}
     .ranking-table{margin:30px auto 0;border-collapse:collapse;width:100%;max-width:600px}
     .ranking-table th,.ranking-table td{border:1px solid #ddd;padding:8px;text-align:center}
@@ -64,7 +60,7 @@
   <div id="score-display" class="score-display" style="display:none">점수: <span id="current-score">0</span></div>
   <div id="chances-display" class="chances-display" style="display:none">클릭 기회: <span id="remaining-chances">∞</span></div>
 
-  <!-- 페이지 1 -->
+  <!-- ===== 페이지1 ===== -->
   <div id="page1" class="page flex-page active">
     <div class="card">
       <h1>작업별 보호구 착용 교육</h1>
@@ -73,7 +69,7 @@
     </div>
   </div>
 
-  <!-- 페이지 2 -->
+  <!-- ===== 페이지2 ===== -->
   <div id="page2" class="page flex-page">
     <div class="card">
       <h2 class="center">교육 정보 입력</h2>
@@ -91,72 +87,15 @@
     </div>
   </div>
 
-  <!-- 페이지 3 -->
-  <div id="page3" class="page">
-    <h2>고소작업시 필수착용 개인보호구</h2>
-    <div class="worker-container center">
-      <img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
-    </div>
-    <div class="gear-grid" id="gear-grid-3"></div>
-    <div id="error-message-3" style="color:red;text-align:center;margin-top:10px"></div>
-    <div class="center button-group" id="button-container-3">
-      <button class="button" id="next-button-3" disabled>다음</button>
-    </div>
-  </div>
+  <!-- ===== 페이지3~7 ===== -->
+  <!-- 동일 구조 반복 -->
+  <div id="page3" class="page"><h2>고소작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-3"></div><div id="error-message-3" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-3"><button class="button" id="next-button-3" disabled>다음</button></div></div>
+  <div id="page4" class="page"><h2>용접작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-4"></div><div id="error-message-4" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-4"><button class="button" id="next-button-4" disabled>다음</button></div></div>
+  <div id="page5" class="page"><h2>정전작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-5"></div><div id="error-message-5" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-5"><button class="button" id="next-button-5" disabled>다음</button></div></div>
+  <div id="page6" class="page"><h2>도장작업시 필수착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-6"></div><div id="error-message-6" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-6"><button class="button" id="next-button-6" disabled>다음</button></div></div>
+  <div id="page7" class="page"><h2>일반작업 공통착용 개인보호구</h2><div class="worker-container center"><img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지"></div><div class="gear-grid" id="gear-grid-7"></div><div id="error-message-7" style="color:red;text-align:center;margin-top:10px"></div><div class="center button-group" id="button-container-7"><button class="button" id="next-button-7" disabled>다음</button></div></div>
 
-  <!-- 페이지 4 -->
-  <div id="page4" class="page">
-    <h2>용접작업시 필수착용 개인보호구</h2>
-    <div class="worker-container center">
-      <img class="worker-image rounded-border" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지">
-    </div>
-    <div class="gear-grid" id="gear-grid-4"></div>
-    <div id="error-message-4" style="color:red;text-align:center;margin-top:10px"></div>
-    <div class="center button-group" id="button-container-4">
-      <button class="button" id="next-button-4" disabled>다음</button>
-    </div>
-  </div>
-
-  <!-- 페이지 5 -->
-  <div id="page5" class="page">
-    <h2>정전작업시 필수착용 개인보호구</h2>
-    <div class="worker-container center">
-      <img class="worker-image rounded-border" src="https://i.imgur.com/WlQOZoc.png" alt="근로자 이미지">
-    </div>
-    <div class="gear-grid" id="gear-grid-5"></div>
-    <div id="error-message-5" style="color:red;text-align:center;margin-top:10px"></div>
-    <div class="center button-group" id="button-container-5">
-      <button class="button" id="next-button-5" disabled>다음</button>
-    </div>
-  </div>
-
-  <!-- 페이지 6 -->
-  <div id="page6" class="page">
-    <h2>도장작업시 필수착용 개인보호구</h2>
-    <div class="worker-container center">
-      <img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
-    </div>
-    <div class="gear-grid" id="gear-grid-6"></div>
-    <div id="error-message-6" style="color:red;text-align:center;margin-top:10px"></div>
-    <div class="center button-group" id="button-container-6">
-      <button class="button" id="next-button-6" disabled>다음</button>
-    </div>
-  </div>
-
-  <!-- 페이지 7 -->
-  <div id="page7" class="page">
-    <h2>일반작업 공통착용 개인보호구</h2>
-    <div class="worker-container center">
-      <img class="worker-image rounded-border" src="https://i.imgur.com/Ifwwzoz.png" alt="근로자 이미지">
-    </div>
-    <div class="gear-grid" id="gear-grid-7"></div>
-    <div id="error-message-7" style="color:red;text-align:center;margin-top:10px"></div>
-    <div class="center button-group" id="button-container-7">
-      <button class="button" id="next-button-7" disabled>다음</button>
-    </div>
-  </div>
-
-  <!-- 페이지 8 -->
+  <!-- ===== 페이지8 ===== -->
   <div id="page8" class="page flex-page">
     <div class="card center">
       <div id="certificate-box">
@@ -166,61 +105,45 @@
         <p id="cert-workerAffiliation"></p>
         <p>보호구 교육을 모두 수료하셨습니다.</p>
       </div>
-      <!-- 점수는 PNG 제외 -->
       <p id="final-score-display" style="margin-top:20px">최종 점수: <span id="final-score">0</span>점</p>
-
       <button class="button" id="saveCert">저장하기</button>
       <button class="button" id="homeButton">홈으로</button>
-
       <h3>🏆 이번 주 랭킹</h3>
       <div id="ranking-loading" class="loading">랭킹을 불러오는 중...</div>
-      <table id="ranking-table" class="ranking-table" style="display:none">
-        <thead><tr><th>순위</th><th>근로자 이름</th><th>현장명</th><th>소속</th><th>점수</th></tr></thead>
-        <tbody id="ranking-body"></tbody>
-      </table>
+      <table id="ranking-table" class="ranking-table" style="display:none"><thead><tr><th>순위</th><th>근로자 이름</th><th>현장명</th><th>소속</th><th>점수</th></tr></thead><tbody id="ranking-body"></tbody></table>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- ===== 라이브러리 ===== -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- ===== JavaScript : 전체 로직 ===== -->
+  <!-- ===== JavaScript 전체 ===== -->
   <script>
     /* ---------- Firebase ---------- */
     const firebaseConfig={apiKey:"AIzaSyDqZFIp_jzaUFiNlZxO3AYI3b8H9zDgyW4",authDomain:"training-private-equipment.firebaseapp.com",projectId:"training-private-equipment",storageBucket:"training-private-equipment.firebasestorage.app",messagingSenderId:"428074253490",appId:"1:428074253490:web:77d4040f8af17338795dab"};
     let db=null;
-    try{firebase.initializeApp(firebaseConfig);db=firebase.firestore()}catch(e){console.log("Firestore 미사용, 로컬 스토리지 사용");}
+    try{firebase.initializeApp(firebaseConfig);db=firebase.firestore()}catch(e){console.log("Firestore 미사용 → 로컬 사용");}
 
-    /* ---------- 보호구 데이터 (3~7) ---------- */
-    const pageGearData={
-      3:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/8gsL65v.png",overlay:"https://i.imgur.com/zBCjthf.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:6}],
-      4:[{id:1,thumbnail:"https://imgur.com/n6iJRus.png",overlay:"",correct:false,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/oU1hjTk.png",overlay:"https://i.imgur.com/cPHvWTb.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"https://i.imgur.com/S77YoN3.png",correct:true,applied:false,zIndex:4},{id:4,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"https://i.imgur.com/v5kUQPg.png",correct:true,applied:false,zIndex:3},{id:5,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:false,applied:false,zIndex:6}],
-      5:[{id:1,thumbnail:"https://i.imgur.com/NnWSEdz.png",overlay:"https://i.imgur.com/ImnVVaf.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"https://i.imgur.com/IMelM9Q.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Z5ojhhi.png",overlay:"https://i.imgur.com/3KX2VD4.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:false,applied:false,zIndex:6}],
-      6:[{id:1,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"https://i.imgur.com/fdH4wzC.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/F1PF0tE.png",overlay:"https://i.imgur.com/Gctejg5.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/n6iJRus.png",overlay:"https://i.imgur.com/oAQe9gI.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"",correct:false,applied:false,zIndex:6}],
-      7:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:6}]
-    };
+    /* ---------- 보호구 데이터 ---------- */
+    const pageGearData={3:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/8gsL65v.png",overlay:"https://i.imgur.com/zBCjthf.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:6}],4:[{id:1,thumbnail:"https://imgur.com/n6iJRus.png",overlay:"",correct:false,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/oU1hjTk.png",overlay:"https://i.imgur.com/cPHvWTb.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"https://i.imgur.com/S77YoN3.png",correct:true,applied:false,zIndex:4},{id:4,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"https://i.imgur.com/v5kUQPg.png",correct:true,applied:false,zIndex:3},{id:5,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:false,applied:false,zIndex:6}],5:[{id:1,thumbnail:"https://i.imgur.com/NnWSEdz.png",overlay:"https://i.imgur.com/ImnVVaf.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"https://i.imgur.com/IMelM9Q.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/Z5ojhhi.png",overlay:"https://i.imgur.com/3KX2VD4.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"",correct:false,applied:false,zIndex:6}],6:[{id:1,thumbnail:"https://i.imgur.com/fdH4wzC.png",overlay:"https://i.imgur.com/fdH4wzC.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/F1PF0tE.png",overlay:"https://i.imgur.com/Gctejg5.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/n6iJRus.png",overlay:"https://i.imgur.com/oAQe9gI.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/NdbXUPl.png",overlay:"",correct:false,applied:false,zIndex:6}],7:[{id:1,thumbnail:"https://i.imgur.com/yvsCOBF.png",overlay:"https://i.imgur.com/yTJe79p.png",correct:true,applied:false,zIndex:1},{id:2,thumbnail:"https://i.imgur.com/nvoxlp7.png",overlay:"https://i.imgur.com/VfJMtc3.png",correct:true,applied:false,zIndex:2},{id:3,thumbnail:"https://i.imgur.com/d7Plzcn.png",overlay:"https://i.imgur.com/5VxjKY6.png",correct:true,applied:false,zIndex:3},{id:4,thumbnail:"https://i.imgur.com/m1GZRHc.png",overlay:"https://i.imgur.com/Cphm4b5.png",correct:true,applied:false,zIndex:4},{id:5,thumbnail:"https://i.imgur.com/Cbcyknu.png",overlay:"",correct:false,applied:false,zIndex:5},{id:6,thumbnail:"https://i.imgur.com/Ui2tbVv.png",overlay:"",correct:false,applied:false,zIndex:6}]};
 
-    /* ---------- 상태 변수 ---------- */
-    let currentScore=0,currentSequenceIndex=0,cycleCount=1,remainingChances=Infinity;
-    let gameSequence=[3,4,5,6,7];   // 현재 진행 순서
-    const maxChances={1:Infinity,2:10,default:5};
+    /* ---------- 상태 ---------- */
+    let currentScore=0,currentSequenceIndex=0,cycleCount=1,remainingChances=Infinity,gameSequence=[3,4,5,6,7];
 
     /* ---------- 유틸 ---------- */
-    const $=q=>document.querySelector(q);
-    const $$=q=>document.querySelectorAll(q);
+    const $=q=>document.querySelector(q),$$=q=>document.querySelectorAll(q);
     function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
     function showPage(id){$$('.page').forEach(p=>p.classList.remove('active'));$('#'+id).classList.add('active');}
 
-    /* ---------- 점수 / 기회 ---------- */
+    /* ---------- 점수/기회 ---------- */
     function showScore(){$('#score-display').style.display='block'}
     function hideScore(){$('#score-display').style.display='none'}
     function showChances(){$('#chances-display').style.display='block';updateChancesUI()}
     function hideChances(){$('#chances-display').style.display='none'}
     function updateScore(){currentScore++;$('#current-score').textContent=currentScore;}
-    function setChances(){remainingChances=cycleCount===1?Infinity:cycleCount===2?maxChances[2]:maxChances.default;updateChancesUI();}
+    function setChances(){remainingChances=cycleCount===1?Infinity:cycleCount===2?10:5;updateChancesUI();}
     function updateChancesUI(){
       const el=$('#remaining-chances'),box=$('#chances-display');
       box.classList.remove('cycle-1','cycle-2','cycle-3-plus');
@@ -228,76 +151,65 @@
       else if(cycleCount===2){el.textContent=remainingChances;box.classList.add('cycle-2')}
       else{el.textContent=remainingChances;box.classList.add('cycle-3-plus')}
     }
-    function decChance(){
-      if(remainingChances===Infinity)return false;
-      remainingChances--;updateChancesUI();
-      if(remainingChances<0){alert(`💀모든 보호구를 착용하지 못했습니다💀\n현재 점수: ${currentScore}점`);goToPage8();return true;}
-      return false;
-    }
+    function decChance(){if(remainingChances===Infinity)return false;remainingChances--;updateChancesUI();if(remainingChances<0){alert(`💀모든 보호구를 착용하지 못했습니다💀\n현재 점수: ${currentScore}점`);goToPage8();return true;}return false;}
 
     /* ---------- 페이지1 → 페이지2 ---------- */
     $('#startButton').onclick=()=>showPage('page2');
 
-    /* ---------- 정보 입력 이후 ---------- */
+    /* ---------- 입력 후 페이지3 ---------- */
     $('#toPage3').onclick=()=>{
       if(!$('#siteName').value.trim()||!$('#workerName').value.trim()||!$('#workerAffiliation').value.trim()){alert('모든 정보를 입력하세요');return;}
-      currentScore=0;$('#current-score').textContent='0';
-      cycleCount=1;currentSequenceIndex=0;gameSequence=[3,4,5,6,7];
-      setChances();showScore();showChances();
-      showPage('page3');initPage(3);bindNextButtons();
+      currentScore=0;$('#current-score').textContent='0';cycleCount=1;currentSequenceIndex=0;gameSequence=[3,4,5,6,7];
+      setChances();showScore();showChances();showPage('page3');resetButtons();initPage(3);bindNext();
     };
+
+    /* ---------- 버튼 초기화 ---------- */
+    function resetButtons(){[3,4,5,6,7].forEach(p=>{$(`#button-container-${p}`).innerHTML=`<button class="button" id="next-button-${p}" disabled>다음</button>`});}
 
     /* ---------- 페이지 초기화 ---------- */
     function initPage(num){
-      const grid=$(`#gear-grid-${num}`);grid.innerHTML='';
+      // overlay 제거
+      const cont=$(`#page${num} .worker-container`);cont.querySelectorAll('.overlay').forEach(o=>o.remove());
+      // applied 리셋
       pageGearData[num].forEach(i=>i.applied=false);
-      shuffle([...pageGearData[num]]).forEach(item=>{
+      // 썸네일
+      const grid=$(`#gear-grid-${num}`);grid.innerHTML='';shuffle([...pageGearData[num]]).forEach(item=>{
         const div=document.createElement('div');div.className='gear-item';
         const img=document.createElement('img');img.src=item.thumbnail;img.className='rounded-border';
-        img.onclick=()=>onGearClick(item,img,num);div.appendChild(img);grid.appendChild(div);
+        img.onclick=()=>gearClick(item,img,num);div.appendChild(img);grid.appendChild(div);
       });
       $(`#next-button-${num}`).disabled=true;
       $(`#error-message-${num}`).textContent='';
     }
 
     /* ---------- 보호구 클릭 ---------- */
-    function onGearClick(item,img,pageNum){
+    function gearClick(item,img,n){
       if(cycleCount>1&&decChance())return;
       if(item.correct){
         item.applied=!item.applied;img.style.opacity=item.applied?0.5:1;
-        item.applied?addOverlay(item,pageNum):removeOverlay(item,pageNum);
+        item.applied?addOv(item,n):rmOv(item,n);
       }else{
-        const err=$(`#error-message-${pageNum}`);err.textContent='올바르지 않은 보호구입니다.';setTimeout(()=>err.textContent='',2000);
+        const e=$(`#error-message-${n}`);e.textContent='올바르지 않은 보호구입니다.';setTimeout(()=>e.textContent='',2000);
       }
-      const allApplied=pageGearData[pageNum].filter(i=>i.correct).every(i=>i.applied);
-      $(`#next-button-${pageNum}`).disabled=!allApplied;
-      if(allApplied)updateScore();
+      const done=pageGearData[n].filter(i=>i.correct).every(i=>i.applied);
+      $(`#next-button-${n}`).disabled=!done;if(done)updateScore();
     }
-    function addOverlay(item,p){if(!item.overlay)return;const o=document.createElement('img');o.src=item.overlay;o.dataset.id=item.id;o.className='overlay';o.style.cssText=`position:absolute;top:0;left:0;width:100%;height:100%;z-index:${item.zIndex}`;$(`#page${p} .worker-container`).appendChild(o);}
-    function removeOverlay(item,p){const o=$(`#page${p} .overlay[data-id="${item.id}"]`);o&&o.remove();}
+    function addOv(item,n){if(!item.overlay)return;const o=document.createElement('img');o.src=item.overlay;o.className='overlay';o.dataset.id=item.id;o.style.cssText=`position:absolute;top:0;left:0;width:100%;height:100%;z-index:${item.zIndex}`;$(`#page${n} .worker-container`).appendChild(o);}
+    function rmOv(item,n){const o=$(`#page${n} .overlay[data-id="${item.id}"]`);o&&o.remove();}
 
-    /* ---------- Next 버튼 바인딩 ---------- */
-    function bindNextButtons(){
-      [3,4,5,6,7].forEach(n=>{
-        $(`#next-button-${n}`).onclick=()=>{
-          currentSequenceIndex++;
-          if(currentSequenceIndex>=gameSequence.length){showCycleEndButtons(n);return;}
-          const next=gameSequence[currentSequenceIndex];
-          setChances();showPage(`page${next}`);initPage(next);
-        };
-      });
+    /* ---------- Next 버튼 ---------- */
+    function bindNext(){[3,4,5,6,7].forEach(p=>{$(`#next-button-${p}`).onclick=()=>nextPage(p);});}
+    function nextPage(cur){
+      currentSequenceIndex++;
+      if(currentSequenceIndex>=gameSequence.length){showEndButtons(cur);return;}
+      const nxt=gameSequence[currentSequenceIndex];setChances();showPage(`page${nxt}`);initPage(nxt);
     }
-    function showCycleEndButtons(n){
-      const box=$(`#button-container-${n}`);
-      box.innerHTML=`<button class="button" onclick="goToPage8()">다음</button><button class="restart-button" onclick="startNewCycle()">다시 학습하기</button>`;
-    }
+    function showEndButtons(p){$(`#button-container-${p}`).innerHTML=`<button class="button" onclick="goToPage8()">다음</button><button class="restart-button" onclick="newCycle()">다시 학습하기</button>`;}
 
     /* ---------- 새 사이클 ---------- */
-    function startNewCycle(){
-      cycleCount++;currentSequenceIndex=0;gameSequence=shuffle([3,4,5,6,7]);
-      setChances();showChances();
-      [3,4,5,6,7].forEach(p=>{$(`#button-container-${p}`).innerHTML=`<button class="button" id="next-button-${p}" disabled>다음</button>`});
-      bindNextButtons();showPage(`page${gameSequence[0]}`);initPage(gameSequence[0]);
+    function newCycle(){
+      cycleCount++;currentSequenceIndex=0;gameSequence=shuffle([3,4,5,6,7]);setChances();showChances();
+      resetButtons();bindNext();showPage(`page${gameSequence[0]}`);initPage(gameSequence[0]);
     }
 
     /* ---------- 페이지8 ---------- */
@@ -307,49 +219,26 @@
       $('#cert-workerName').textContent="근로자 이름: "+$('#workerName').value;
       $('#cert-workerAffiliation').textContent="소속: "+$('#workerAffiliation').value;
       $('#final-score').textContent=currentScore;
-      saveScoreAndLoadRanking();
-      showPage('page8');
+      saveScore();showPage('page8');
     }
 
-    /* ---------- 랭킹 저장 / 로드 ---------- */
-    function weekKey(){
-      const now=new Date();const kor=new Date(now.getTime()+9*60*60*1000);
-      const sun=new Date(kor);sun.setDate(kor.getDate()-kor.getDay());sun.setHours(0,0,0,0);
-      return `${sun.getFullYear()}-${String(sun.getMonth()+1).padStart(2,'0')}-${String(sun.getDate()).padStart(2,'0')}`;
-    }
-    async function saveScoreAndLoadRanking(){
+    /* ---------- 랭킹 ---------- */
+    const wKey=()=>{const d=new Date(new Date().getTime()+9*3600*1000);d.setDate(d.getDate()-d.getDay());d.setHours(0,0,0,0);return d.toISOString().slice(0,10);}
+    async function saveScore(){
       const data={name:$('#workerName').value,siteName:$('#siteName').value,affiliation:$('#workerAffiliation').value,score:currentScore,timestamp:new Date()};
-      try{
-        if(db){await saveToFirestore(data);await loadRankingFromFirestore();}
-        else{saveToLocal(data);loadRankingFromLocal();}
-      }catch(e){console.error(e);saveToLocal(data);loadRankingFromLocal();}
+      try{if(db){await fSave(data);await fLoad();}else{lSave(data);lLoad();}}catch{lSave(data);lLoad();}
     }
-    async function saveToFirestore(d){
-      const key=weekKey();const ref=db.collection('rankings').doc(key);const doc=await ref.get();let arr=[];if(doc.exists)arr=doc.data().rankings||[];
-      arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);await ref.set({rankings:arr});
-    }
-    async function loadRankingFromFirestore(){
-      const key=weekKey();const doc=await db.collection('rankings').doc(key).get();displayRanking(doc.exists?doc.data().rankings||[]:[]);
-    }
-    function saveToLocal(d){
-      const key='rank_'+weekKey();let arr=JSON.parse(localStorage.getItem(key)||'[]');
-      arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);localStorage.setItem(key,JSON.stringify(arr));
-    }
-    function loadRankingFromLocal(){
-      const key='rank_'+weekKey();const arr=JSON.parse(localStorage.getItem(key)||'[]');displayRanking(arr);
-    }
-    function displayRanking(ranks){
-      $('#ranking-loading').style.display='none';$('#ranking-table').style.display='table';
-      const body=$('#ranking-body');body.innerHTML='';
-      for(let i=0;i<5;i++){
-        const row=body.insertRow();if(i<ranks.length){
-          const r=ranks[i];row.innerHTML=`<td>${i+1}</td><td>${r.name}</td><td>${r.siteName}</td><td>${r.affiliation}</td><td>${r.score}</td>`;
-        }else row.innerHTML=`<td>${i+1}</td><td>-</td><td>-</td><td>-</td><td>-</td>`;
-      }
+    async function fSave(d){const ref=db.collection('rankings').doc(wKey());const snap=await ref.get();let arr=snap.exists?snap.data().rankings:[];arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);await ref.set({rankings:arr});}
+    async function fLoad(){const snap=await db.collection('rankings').doc(wKey()).get();displayRank(snap.exists?snap.data().rankings:[]);}
+    function lSave(d){const k='rank_'+wKey();let arr=JSON.parse(localStorage.getItem(k)||'[]');arr.push(d);arr.sort((a,b)=>b.score-a.score);if(arr.length>5)arr=arr.slice(0,5);localStorage.setItem(k,JSON.stringify(arr));}
+    function lLoad(){const arr=JSON.parse(localStorage.getItem('rank_'+wKey())||'[]');displayRank(arr);}
+    function displayRank(r){
+      $('#ranking-loading').style.display='none';$('#ranking-table').style.display='table';const body=$('#ranking-body');body.innerHTML='';
+      for(let i=0;i<5;i++){const row=body.insertRow();if(i<r.length){row.innerHTML=`<td>${i+1}</td><td>${r[i].name}</td><td>${r[i].siteName}</td><td>${r[i].affiliation}</td><td>${r[i].score}</td>`;}else row.innerHTML=`<td>${i+1}</td><td>-</td><td>-</td><td>-</td><td>-</td>`;}
     }
 
     /* ---------- 수료증 저장 ---------- */
-    $('#saveCert').onclick=()=>{html2canvas($('#certificate-box')).then(c=>{const a=document.createElement('a');a.download='certificate.png';a.href=c.toDataURL();a.click();});}
+    $('#saveCert').onclick=()=>html2canvas($('#certificate-box')).then(c=>{const a=document.createElement('a');a.download='certificate.png';a.href=c.toDataURL();a.click();});
 
     /* ---------- 홈 ---------- */
     $('#homeButton').onclick=()=>location.reload();
