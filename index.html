@@ -398,10 +398,10 @@
         chancesElement.textContent = '∞';
         chancesDisplay.classList.add('cycle-1'); // 초록색
       } else if (cycleCount === 2) {
-        chancesElement.textContent = remainingChances;
+        chancesElement.textContent = Math.max(0, remainingChances); // 0 이하일 때는 0으로 표시
         chancesDisplay.classList.add('cycle-2'); // 주황색
       } else {
-        chancesElement.textContent = remainingChances;
+        chancesElement.textContent = Math.max(0, remainingChances); // 0 이하일 때는 0으로 표시
         chancesDisplay.classList.add('cycle-3-plus'); // 빨간색
       }
     }
@@ -418,52 +418,27 @@
 
     // 기회 차감
     function decreaseChances() {
-      if (remainingChances !== Infinity && remainingChances > 0) {
+      if (remainingChances !== Infinity) {
         remainingChances--;
         updateChances();
         
         console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`);
         
-        if (remainingChances <= 0) {
-          // 기회 소진 시 다음 페이지로 이동 (페이지별 기회 소진)
-          console.log('💀 페이지 기회 소진으로 다음 페이지로 이동');
+        if (remainingChances < 0) {
+          // 허용된 클릭 수를 초과한 경우 게임 종료
+          console.log('💀 보호구를 모두 착용하지 못했습니다!');
           setTimeout(() => {
-            alert(`이 페이지의 기회를 모두 소진했습니다!\n다음 페이지로 이동합니다.`);
-            // 현재 페이지의 올바른 보호구들을 모두 착용 처리
-            autoCompleteCurrentPage();
-            goToNextPage();
+            if (cycleCount === 2) {
+              alert(`보호구를 모두 착용하지 못했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
+            } else {
+              alert(`보호구를 모두 착용하지 못했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
+            }
+            goToPage8();
           }, 500);
-          return true; // 페이지 완료됨
+          return true; // 게임 종료됨
         }
       }
       return false; // 게임 계속
-    }
-
-    // 현재 페이지의 올바른 보호구들을 자동으로 착용 처리
-    function autoCompleteCurrentPage() {
-      const currentPageNum = gameSequence[currentSequenceIndex];
-      const gearItems = pageGearData[currentPageNum];
-      
-      // 올바른 보호구들을 모두 착용 상태로 변경
-      gearItems.forEach(item => {
-        if (item.correct && !item.applied) {
-          item.applied = true;
-          addOverlayImage(item, currentPageNum);
-          
-          // 해당 썸네일 이미지의 투명도 변경
-          const gearGrid = document.getElementById(`gear-grid-${currentPageNum}`);
-          const imgElement = gearGrid.querySelector(`img[data-id="${item.id}"]`);
-          if (imgElement) {
-            imgElement.style.opacity = 0.5;
-          }
-        }
-      });
-      
-      // 다음 버튼 활성화
-      const nextButton = document.getElementById(`next-button-${currentPageNum}`);
-      if (nextButton) nextButton.disabled = false;
-      
-      console.log(`🤖 페이지 ${currentPageNum} 자동 완료 처리`);
     }
 
     // 사이클별 기회 설정
@@ -618,10 +593,7 @@
       gameSequence = shuffle([3, 4, 5, 6, 7]);
       currentSequenceIndex = 0;
       
-      // 새 사이클 기회 설정
-      setChancesForCycle();
-      
-      console.log(`📊 사이클 ${cycleCount} - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`);
+      console.log(`📊 사이클 ${cycleCount} 시작 - 순서: [${gameSequence.join(',')}]`);
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -633,7 +605,7 @@
       
       const firstPageNum = gameSequence[0];
       showPage(`page${firstPageNum}`);
-      initializeGame(firstPageNum);
+      initializeGame(firstPageNum); // 여기서 기회 설정됨
       
       // 이벤트 리스너 다시 바인딩
       bindNextButtonEvents();
@@ -666,8 +638,7 @@
       const gearGrid = document.getElementById(`gear-grid-${pageNum}`);
       gearGrid.innerHTML = '';
       
-      // 🔄 첫 페이지가 아닌 경우에만 기회 초기화 (goToNextPage에서 이미 처리됨)
-      // 첫 페이지인 경우에만 기회 설정
+      // 🔄 첫 페이지인 경우에만 기회 설정 (다른 페이지는 goToNextPage에서 이미 처리됨)
       if (currentSequenceIndex === 0) {
         setChancesForCycle();
         console.log(`🎮 첫 페이지 ${pageNum} 시작 - 기회: ${remainingChances}`);
@@ -712,9 +683,9 @@
       
       // 첫 번째 사이클이 아닌 경우에만 기회 차감
       if (cycleCount > 1) {
-        const pageCompleted = decreaseChances();
-        if (pageCompleted) {
-          return; // 페이지가 완료된 경우 더 이상 진행하지 않음
+        const gameEnded = decreaseChances();
+        if (gameEnded) {
+          return; // 게임이 종료된 경우 더 이상 진행하지 않음
         }
       }
 
