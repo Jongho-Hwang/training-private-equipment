@@ -422,11 +422,11 @@
         remainingChances--;
         updateChances();
         
-        console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`); // 디버그용
+        console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`);
         
         if (remainingChances <= 0) {
           // 기회 소진 시 게임 종료
-          console.log('💀 기회 소진으로 게임 종료'); // 디버그용
+          console.log('💀 기회 소진으로 게임 종료');
           setTimeout(() => {
             alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
             goToPage8();
@@ -441,13 +441,13 @@
     function setChancesForCycle() {
       if (cycleCount === 1) {
         remainingChances = Infinity;
-        console.log(`🟢 사이클 ${cycleCount}: 무제한 기회 설정`); // 디버그용
+        console.log(`🟢 사이클 ${cycleCount}: 무제한 기회 설정`);
       } else if (cycleCount === 2) {
         remainingChances = maxChancesPerCycle[2];
-        console.log(`🟡 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
+        console.log(`🟡 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`);
       } else {
         remainingChances = maxChancesPerCycle.default;
-        console.log(`🔴 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
+        console.log(`🔴 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`);
       }
       updateChances();
     }
@@ -473,7 +473,7 @@
       gameSequence = [3, 4, 5, 6, 7];
       cycleCount = 1; // 첫 번째 사이클로 명시적 초기화
       
-      console.log('🎮 게임 시작 - 첫 번째 사이클 (무제한 기회)'); // 디버그용
+      console.log('🎮 게임 시작 - 첫 번째 사이클 (무제한 기회)');
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -578,7 +578,7 @@
     function startNewRandomCycle() {
       // 사이클 카운트 증가
       cycleCount++;
-      console.log(`🔄 새로운 사이클 시작: ${cycleCount}`); // 디버그용
+      console.log(`🔄 새로운 사이클 시작: ${cycleCount}`);
       
       isInRandomCycle = true;
       gameSequence = shuffle([3, 4, 5, 6, 7]);
@@ -587,7 +587,7 @@
       // 새 사이클 기회 설정
       setChancesForCycle();
       
-      console.log(`📊 사이클 ${cycleCount} - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`); // 디버그용
+      console.log(`📊 사이클 ${cycleCount} - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`);
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -663,10 +663,20 @@
       
       document.getElementById(`error-message-${pageNum}`).innerText = '';
       
-      console.log(`🎯 페이지 ${pageNum} 초기화 완료 (사이클 ${cycleCount}, 기회: ${remainingChances})`); // 디버그용
+      console.log(`🎯 페이지 ${pageNum} 초기화 완료 (사이클 ${cycleCount}, 기회: ${remainingChances})`);
     }
 
     function handleGearClick(item, imgElement, pageNum) {
+      console.log(`👆 보호구 클릭: ${item.correct ? '올바름' : '틀림'} (사이클 ${cycleCount})`);
+      
+      // 첫 번째 사이클이 아닌 경우에만 기회 차감
+      if (cycleCount > 1) {
+        const gameEnded = decreaseChances();
+        if (gameEnded) {
+          return; // 게임이 종료된 경우 더 이상 진행하지 않음
+        }
+      }
+
       if(item.correct) {
         if(!item.applied) {
           imgElement.style.opacity = 0.5;
