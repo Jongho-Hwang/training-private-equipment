@@ -11,11 +11,11 @@
     .center{text-align:center}
     .rounded-border{border:1px solid #000;border-radius:10px}
     .button{padding:10px 20px;margin:10px;font-size:16px;cursor:pointer}
-    /* page1 full‑screen */
+    /* page1 full-screen */
     #page1{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;padding:0}
     #page1 img{width:90vw;max-width:320px;height:auto}
     #page1 .button{width:80vw;max-width:220px}
-    #page2 input{width:100%;padding:8px;box-sizing:border-box;margin-top:4px;margin-bottom:14px}
+    #page2 input{width:100%;padding:8px;box-sizing:border-box;margin:8px 0}
     .worker-container{position:relative;width:100%}
     .worker-container img{width:100%;height:auto;display:block;margin:0 auto}
     .gear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
@@ -45,7 +45,7 @@
     <button class="button" onclick="toGearStart()">다음</button>
   </div>
 
-  <!-- gear pages 3‑7 (identical structure) -->
+  <!-- gear pages 3-7 (identical) -->
   <div id="page3" class="page gear-page">
     <h2 class="gear-heading">일반작업 시 고소작업 시 필수착용 개인보호구</h2>
     <div class="worker-container"></div>
@@ -53,7 +53,6 @@
     <div class="error-message"></div>
     <div class="center"><button class="button" id="btn3" disabled onclick="goPage(4)">다음</button></div>
   </div>
-
   <div id="page4" class="page gear-page">
     <h2 class="gear-heading">용접작업 시 필수착용 개인보호구</h2>
     <div class="worker-container"></div>
@@ -61,7 +60,6 @@
     <div class="error-message"></div>
     <div class="center"><button class="button" id="btn4" disabled onclick="goPage(5)">다음</button></div>
   </div>
-
   <div id="page5" class="page gear-page">
     <h2 class="gear-heading">정전작업 시 필수착용 개인보호구</h2>
     <div class="worker-container"></div>
@@ -69,7 +67,6 @@
     <div class="error-message"></div>
     <div class="center"><button class="button" id="btn5" disabled onclick="goPage(6)">다음</button></div>
   </div>
-
   <div id="page6" class="page gear-page">
     <h2 class="gear-heading">정전작업 시 필수착용 개인보호구</h2>
     <div class="worker-container"></div>
@@ -77,7 +74,6 @@
     <div class="error-message"></div>
     <div class="center"><button class="button" id="btn6" disabled onclick="goPage(7)">다음</button></div>
   </div>
-
   <div id="page7" class="page gear-page">
     <h2 class="gear-heading">일반작업 공통착용 개인보호구</h2>
     <div class="worker-container"></div>
@@ -103,63 +99,114 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-// ---------- 페이지 전환 -----------
-function goPage(num){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById('page'+num).classList.add('active');
-  if(num>=3&&num<=7) initGearPage(num);
-  if(num===8) showCertificate();
-}
+  function goPage(num) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page' + num).classList.add('active');
+    if (num >= 3 && num <= 7) initGearPage(num);
+    if (num === 8) showCertificate();
+  }
+  function toGearStart() {
+    const err = document.getElementById('form-error');
+    const site = document.getElementById('siteName').value.trim();
+    const worker = document.getElementById('workerName').value.trim();
+    const aff = document.getElementById('workerAffiliation').value.trim();
+    if (!site || !worker || !aff) {
+      err.textContent = '모든 정보를 입력해주세요.';
+      return;
+    }
+    err.textContent = '';
+    goPage(3);
+  }
 
-function toGearStart(){
-  const err=document.getElementById('form-error');
-  if(!siteName.value.trim()||!workerName.value.trim()||!workerAffiliation.value.trim()){
-    err.textContent='모든 정보를 입력해주세요.';return;}
-  err.textContent='';
-  goPage(3);
-}
+  const gearData = {/* ... */};
 
-// ---------- 데이터 ----------
-const gearData={/* same as previous (truncated for brevity) */};
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
 
-// -------------- 유틸 --------------
-function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+  function initGearPage(pg) {
+    const data = gearData[pg];
+    const page = document.getElementById('page' + pg);
+    const container = page.querySelector('.worker-container');
+    const grid = page.querySelector('.gear-grid');
+    const err = page.querySelector('.error-message');
+    const btn = document.getElementById('btn' + pg);
+    container.innerHTML = `<img src="${data.workerImg}" class="rounded-border" alt="근로자">`;
+    grid.innerHTML = '';
+    err.textContent = '';
+    btn.disabled = true;
+    shuffle([...data.items]).forEach(item => {
+      item.applied = false;
+      const div = document.createElement('div');
+      div.className = 'gear-item';
+      const img = document.createElement('img');
+      img.src = item.thumb;
+      img.className = 'rounded-border';
+      img.onclick = () => toggleItem(page, pg, item, img);
+      div.appendChild(img);
+      grid.appendChild(div);
+    });
+    page.querySelectorAll('.overlay').forEach(o => o.remove());
+  }
 
-// ---------- 기어 페이지 초기화 ----------
-function initGearPage(pg){
-  const data=gearData[pg];
-  const page=document.getElementById('page'+pg);
-  const container=page.querySelector('.worker-container');
-  const grid=page.querySelector('.gear-grid');
-  const err=page.querySelector('.error-message');
-  const btn=document.getElementById('btn'+pg);
-  container.innerHTML=`<img src="${data.workerImg}" class="rounded-border" alt="근로자">`;
-  grid.innerHTML='';err.textContent='';btn.disabled=true;
-  shuffle([...data.items]).forEach(item=>{
-    item.applied=false;
-    const div=document.createElement('div');div.className='gear-item';
-    const img=document.createElement('img');img.src=item.thumb;img.className='rounded-border';
-    img.onclick=()=>toggleItem(page,pg,item,img);
-    div.appendChild(img);grid.appendChild(div);
-  });
-  // remove old overlays
-  page.querySelectorAll('.overlay').forEach(o=>o.remove());
-}
+  function toggleItem(page, pg, item, img) {
+    const err = page.querySelector('.error-message');
+    if (!item.correct) {
+      err.textContent = '올바르지 않은 보호구가 아닙니다.';
+      setTimeout(() => err.textContent = '', 2000);
+      return;
+    }
+    item.applied = !item.applied;
+    img.style.opacity = item.applied ? 0.5 : 1;
+    if (item.applied) addOverlay(page, item);
+    else removeOverlay(page, item);
+    checkAll(pg);
+  }
 
-function toggleItem(page,pg,item,img){
-  const err=page.querySelector('.error-message');
-  if(!item.correct){err.textContent='올바르지 않은 보호구가 아닙니다.';setTimeout(()=>err.textContent='',2000);return;}
-  item.applied=!item.applied;img.style.opacity=item.applied?0.5:1;
-  if(item.applied)addOverlay(page,item);else removeOverlay(page,item);
-  checkAll(pg);
-}
+  function addOverlay(page, item) {
+    if (!item.overlay) return;
+    const c = page.querySelector('.worker-container');
+    const ov = document.createElement('img');
+    ov.src = item.overlay;
+    ov.className = 'overlay';
+    ov.dataset.id = item.id;
+    ov.style.position = 'absolute';
+    ov.style.top = '0';
+    ov.style.left = '0';
+    ov.style.width = '100%';
+    ov.style.height = '100%';
+    if (item.z) ov.style.zIndex = item.z;
+    c.appendChild(ov);
+  }
 
-function addOverlay(page,item){if(!item.overlay)return;const c=page.querySelector('.worker-container');const ov=document.createElement('img');ov.src=item.overlay;ov.className='overlay';ov.dataset.id=item.id;ov.style.position='absolute';ov.style.top='0';ov.style.left='0';ov.style.width='100%';ov.style.height='100%';if(item.z)ov.style.zIndex=item.z;c.appendChild(ov);}
-function removeOverlay(page,item){const ov=page.querySelector(`img.overlay[data-id='${item.id}']`);if(ov)ov.remove();}
-function checkAll(pg){const all=gearData[pg].items.filter(i=>i.correct).every(i=>i.applied);document.getElementById('btn'+pg).disabled=!all;}
+  function removeOverlay(page, item) {
+    const ov = page.querySelector(`img.overlay[data-id='${item.id}']`);
+    if (ov) ov.remove();
+  }
 
-function showCertificate(){cert-site.textContent=siteName.value;cert-worker.textContent=workerName.value;cert-affiliation.textContent=workerAffiliation.value;}
-function saveCert(){html2canvas(document.getElementById('certificate-box')).then(cv=>{const link=document.createElement('a');link.download='certificate.png';link.href=cv.toDataURL();link.click();});}
+  function checkAll(pg) {
+    const all = gearData[pg].items.filter(i => i.correct).every(i => i.applied);
+    document.getElementById('btn' + pg).disabled = !all;
+  }
+
+  function showCertificate() {
+    document.getElementById('cert-site').textContent = document.getElementById('siteName').value;
+    document.getElementById('cert-worker').textContent = document.getElementById('workerName').value;
+    document.getElementById('cert-affiliation').textContent = document.getElementById('workerAffiliation').value;
+  }
+
+  function saveCert() {
+    html2canvas(document.getElementById('certificate-box')).then(canvas => {
+      const link = document.createElement('a');
+      link.download = 'certificate.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  }
 </script>
 </body>
 </html>
