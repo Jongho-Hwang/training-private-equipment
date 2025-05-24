@@ -357,99 +357,98 @@
       ]
     };
 
-    // 게임 상태 변수
+    // 게임 상태 변수 (간소화)
     let currentScore = 0;
-    let gameSequence = [3, 4, 5, 6, 7]; // 기본 페이지 순서
+    let gameSequence = [3, 4, 5, 6, 7];
     let currentSequenceIndex = 0;
     let hasCompletedFirstCycle = false;
-    let isInRandomCycle = false;
-    let cycleCount = 1; // 현재 사이클 횟수
-    let remainingChances = Infinity; // 남은 기회
-    let maxChancesPerCycle = {
-      1: Infinity, // 첫 번째 사이클: 무제한
-      2: 10,       // 두 번째 사이클: 10번
-      default: 5   // 세 번째 사이클 이후: 5번
-    };
-
-    // 점수 업데이트 함수
-    function updateScore() {
-      currentScore += 1;
-      document.getElementById('current-score').textContent = currentScore;
+    let cycleCount = 1;
+    let remainingChances = Infinity;
+    
+    // 디버그 모드
+    const DEBUG = true;
+    function debugLog(message) {
+      if (DEBUG) console.log(message);
     }
 
-    // 점수 표시/숨김
-    function showScore() {
-      document.getElementById('score-display').style.display = 'block';
+    // 기회 관리 함수들 (단순화)
+    function initializeCycleChances() {
+      debugLog(`🔄 사이클 ${cycleCount} 기회 초기화`);
+      
+      if (cycleCount === 1) {
+        remainingChances = Infinity;
+        debugLog(`🟢 사이클 1: 무제한 기회`);
+      } else if (cycleCount === 2) {
+        remainingChances = 10;
+        debugLog(`🟡 사이클 2: 10번 기회`);
+      } else {
+        remainingChances = 5;
+        debugLog(`🔴 사이클 3+: 5번 기회`);
+      }
+      
+      updateChancesDisplay();
     }
-
-    function hideScore() {
-      document.getElementById('score-display').style.display = 'none';
-    }
-
-    // 기회 업데이트 함수
-    function updateChances() {
+    
+    function updateChancesDisplay() {
       const chancesElement = document.getElementById('remaining-chances');
       const chancesDisplay = document.getElementById('chances-display');
       
-      // 기존 클래스 제거
-      chancesDisplay.classList.remove('cycle-1', 'cycle-2', 'cycle-3-plus');
+      debugLog(`🔄 UI 업데이트: 사이클 ${cycleCount}, 기회 ${remainingChances}`);
+      
+      // 클래스 초기화
+      chancesDisplay.className = 'chances-display';
       
       if (remainingChances === Infinity) {
         chancesElement.textContent = '∞';
-        chancesDisplay.classList.add('cycle-1'); // 초록색
+        chancesDisplay.classList.add('cycle-1');
       } else if (cycleCount === 2) {
         chancesElement.textContent = remainingChances;
-        chancesDisplay.classList.add('cycle-2'); // 주황색
+        chancesDisplay.classList.add('cycle-2');
       } else {
         chancesElement.textContent = remainingChances;
-        chancesDisplay.classList.add('cycle-3-plus'); // 빨간색
+        chancesDisplay.classList.add('cycle-3-plus');
       }
+      
+      debugLog(`✅ UI 업데이트 완료: ${chancesElement.textContent}`);
     }
-
-    // 기회 표시/숨김
-    function showChances() {
-      document.getElementById('chances-display').style.display = 'block';
-      updateChances();
-    }
-
-    function hideChances() {
-      document.getElementById('chances-display').style.display = 'none';
-    }
-
-    // 기회 차감
-    function decreaseChances() {
-      if (remainingChances !== Infinity && remainingChances > 0) {
+    
+    function useChance() {
+      debugLog(`🎯 기회 사용 시도 - 현재: ${remainingChances}, 사이클: ${cycleCount}`);
+      
+      // 첫 번째 사이클은 기회 무제한
+      if (cycleCount === 1) {
+        debugLog(`🟢 첫 사이클 - 기회 차감 없음`);
+        return false; // 게임 종료 안됨
+      }
+      
+      // 두 번째 사이클부터 기회 차감
+      if (remainingChances > 0) {
         remainingChances--;
-        updateChances();
-        
-        console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`); // 디버그용
+        debugLog(`📉 기회 차감: ${remainingChances} 남음`);
+        updateChancesDisplay();
         
         if (remainingChances <= 0) {
-          // 기회 소진 시 게임 종료
-          console.log('💀 기회 소진으로 게임 종료'); // 디버그용
-          setTimeout(() => {
-            alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
-            goToPage8();
-          }, 500);
+          debugLog(`💥 기회 소진! 게임 종료`);
+          endGameDueToNoChances();
           return true; // 게임 종료됨
         }
       }
+      
       return false; // 게임 계속
     }
-
-    // 사이클별 기회 설정
-    function setChancesForCycle() {
-      if (cycleCount === 1) {
-        remainingChances = Infinity;
-        console.log(`🟢 사이클 ${cycleCount}: 무제한 기회 설정`); // 디버그용
-      } else if (cycleCount === 2) {
-        remainingChances = maxChancesPerCycle[2];
-        console.log(`🟡 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
-      } else {
-        remainingChances = maxChancesPerCycle.default;
-        console.log(`🔴 사이클 ${cycleCount}: ${remainingChances}번 기회 설정`); // 디버그용
-      }
-      updateChances();
+    
+    function endGameDueToNoChances() {
+      // 모든 보호구 클릭 비활성화
+      document.querySelectorAll('.gear-item img').forEach(img => {
+        img.style.pointerEvents = 'none';
+        img.style.opacity = '0.3';
+      });
+      
+      // 짧은 지연 후 알림 및 페이지 이동
+      setTimeout(() => {
+        alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
+        goToPage8();
+      }, 200);
     }
 
     // 페이지 전환 이벤트
@@ -457,6 +456,7 @@
       showPage('page2');
     });
 
+    // 게임 시작 (완전히 새로 작성)
     document.getElementById('toPage3').addEventListener('click', function() {
       if(document.getElementById('siteName').value.trim() === '' || 
          document.getElementById('workerName').value.trim() === '' || 
@@ -465,17 +465,22 @@
         return;
       }
       
-      // 게임 완전 초기화
+      debugLog('🎮 ===== 게임 시작 =====');
+      
+      // 완전 초기화
       currentScore = 0;
       currentSequenceIndex = 0;
       hasCompletedFirstCycle = false;
-      isInRandomCycle = false;
       gameSequence = [3, 4, 5, 6, 7];
-      cycleCount = 1; // 첫 번째 사이클로 명시적 초기화
+      cycleCount = 1;
       
-      console.log('🎮 게임 시작 - 첫 번째 사이클 (무제한 기회)'); // 디버그용
+      // 점수 및 기회 설정
+      document.getElementById('current-score').textContent = currentScore;
+      initializeCycleChances();
+      showScore();
+      showChances();
       
-      // 모든 페이지의 버튼을 기본 상태로 초기화
+      // 모든 버튼 초기화
       for (let i = 3; i <= 7; i++) {
         const buttonContainer = document.getElementById(`button-container-${i}`);
         if (buttonContainer) {
@@ -483,15 +488,13 @@
         }
       }
       
-      document.getElementById('current-score').textContent = currentScore;
-      setChancesForCycle(); // 첫 사이클 기회 설정 (무제한)
-      showScore();
-      showChances();
+      // 첫 페이지 시작
+      debugLog('🎯 첫 번째 페이지로 이동');
       showPage('page3');
       initializeGame(3);
-      
-      // 이벤트 리스너 다시 바인딩
       bindNextButtonEvents();
+      
+      debugLog('✅ 게임 시작 완료');
     });
 
     // 다음 버튼 이벤트 바인딩 함수
@@ -576,9 +579,11 @@
 
     // 새로운 랜덤 사이클 시작
     function startNewRandomCycle() {
+      console.log(`🔄 사이클 증가: ${cycleCount} → ${cycleCount + 1}`);
+      
       // 사이클 카운트 증가
       cycleCount++;
-      console.log(`🔄 새로운 사이클 시작: ${cycleCount}`); // 디버그용
+      console.log(`🆕 새로운 사이클 ${cycleCount} 시작!`);
       
       isInRandomCycle = true;
       gameSequence = shuffle([3, 4, 5, 6, 7]);
@@ -587,7 +592,7 @@
       // 새 사이클 기회 설정
       setChancesForCycle();
       
-      console.log(`📊 사이클 ${cycleCount} - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`); // 디버그용
+      console.log(`📊 사이클 ${cycleCount} 설정 완료 - 기회: ${remainingChances}, 순서: [${gameSequence.join(',')}]`);
       
       // 모든 페이지의 버튼을 기본 상태로 초기화
       for (let i = 3; i <= 7; i++) {
@@ -598,6 +603,7 @@
       }
       
       const firstPageNum = gameSequence[0];
+      console.log(`🎮 첫 번째 페이지로 이동: ${firstPageNum}`);
       showPage(`page${firstPageNum}`);
       initializeGame(firstPageNum);
       
@@ -709,7 +715,8 @@
     }
 
     function checkAllCorrectApplied(pageNum) {
-      checkGameComplete(pageNum);
+      // 호환성을 위해 새 함수로 리다이렉트
+      checkPageComplete(pageNum);
     }
 
     // 점수 저장 및 랭킹 로드
