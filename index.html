@@ -7,8 +7,12 @@
   <style>
     /* === 기본 세팅 === */
     body{margin:0;padding:0;font-family:sans-serif}
-    .page{display:none;padding:20px;box-sizing:border-box}
-    .active{display:block}
+    /* 모든 페이지는 기본적으로 안 보인다 */
+    .page{display:none;width:100%;box-sizing:border-box;padding:20px}
+    /* 현재 활성 페이지만 block 또는 flex 로 표시 */
+    .page.active{display:block}
+    .flex-page.active{display:flex;justify-content:center;align-items:center;min-height:100vh}
+
     .center{text-align:center}
 
     /* === 공통 카드 === */
@@ -20,12 +24,9 @@
     }
 
     /* === 페이지별 배경 === */
-    #page1{background:linear-gradient(135deg,#7b5dff 0%,#4a8dff 100%);
-           min-height:100vh;display:flex;justify-content:center;align-items:center}
-    #page2{background:radial-gradient(circle at top left,#f3f3f5 0%,#e9e9eb 100%);
-           min-height:100vh;display:flex;justify-content:center;align-items:center}
-    #page8{background:linear-gradient(135deg,#b6f0e8 0%,#d3ecf6 50%,#ffd6e6 100%);
-           min-height:100vh;display:flex;justify-content:center;align-items:center}
+    #page1{background:linear-gradient(135deg,#7b5dff 0%,#4a8dff 100%)}
+    #page2{background:radial-gradient(circle at top left,#f3f3f5 0%,#e9e9eb 100%)}
+    #page8{background:linear-gradient(135deg,#b6f0e8 0%,#d3ecf6 50%,#ffd6e6 100%)}
 
     /* === 버튼 === */
     .button{
@@ -88,7 +89,7 @@
   <div id="chances-display" class="chances-display" style="display:none">클릭 기회: <span id="remaining-chances">∞</span></div>
 
   <!-- 페이지 1 -->
-  <div id="page1" class="page active">
+  <div id="page1" class="page flex-page active">
     <div class="card center">
       <h1>작업별 보호구 착용 교육</h1>
       <img src="https://i.imgur.com/Tu6mJ5J.png" alt="메인 이미지"><br>
@@ -97,7 +98,7 @@
   </div>
 
   <!-- 페이지 2 -->
-  <div id="page2" class="page">
+  <div id="page2" class="page flex-page">
     <div class="card">
       <h2 class="center">교육 정보 입력</h2>
       <label>현장명:</label><br>
@@ -180,7 +181,7 @@
   </div>
 
   <!-- 페이지 8 -->
-  <div id="page8" class="page">
+  <div id="page8" class="page flex-page">
     <div class="card center">
       <h2>수료증</h2>
       <div id="certificate-box">
@@ -212,10 +213,10 @@
   <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- ===== JavaScript : 전체 게임 로직(누락 없이 포함) ===== -->
+  <!-- ===== JavaScript : 전체 게임 로직 (누락 없이 포함) ===== -->
   <script>
     /* ------------------------------------------------------------------
-       (아래 JS 내용은 이전 버전과 동일하며 한 글자도 빠짐없이 그대로 포함)
+       기존 JS 로직 그대로 — 한 글자도 빠짐없이 포함
     ------------------------------------------------------------------ */
 
     // Firebase 설정 - 실제 프로젝트 설정 적용됨
@@ -405,7 +406,10 @@
 
     document.getElementById('homeButton').addEventListener('click',()=>location.reload());
 
-    function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+    function showPage(id){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
     function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 
     function initializeGame(pageNum){
@@ -511,4 +515,3 @@
   </script>
 </body>
 </html>
-
