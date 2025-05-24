@@ -50,6 +50,18 @@
       cursor: pointer;
       margin: 0 auto;
     }
+    /* 점수 표시 */
+    .score-display {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-weight: bold;
+      z-index: 1000;
+    }
     /* 페이지8 스타일 */
     #certificate-box {
       border: 2px solid #000;
@@ -63,9 +75,57 @@
       font-size: 16px;
       cursor: pointer;
     }
+    /* 랭킹 테이블 스타일 */
+    .ranking-table {
+      margin-top: 30px;
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .ranking-table th, .ranking-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    .ranking-table th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    .ranking-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .loading {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+    }
+    /* 버튼 그룹 스타일 */
+    .button-group {
+      margin-top: 20px;
+    }
+    .restart-button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .restart-button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
+  <!-- 점수 표시 (페이지 3-7에서만 표시) -->
+  <div id="score-display" class="score-display" style="display: none;">
+    점수: <span id="current-score">0</span>
+  </div>
+
   <!-- 페이지1: 시작 화면 -->
   <div id="page1" class="page active">
     <div class="center">
@@ -99,7 +159,7 @@
     <div class="gear-grid" id="gear-grid-3"></div>
     <div id="error-message-3" style="color: red; text-align: center; margin-top: 10px;"></div>
     <div class="center">
-      <button class="button" id="toPage4" disabled>다음</button>
+      <button class="button" id="next-button-3" disabled>다음</button>
     </div>
   </div>
 
@@ -112,7 +172,7 @@
     <div class="gear-grid" id="gear-grid-4"></div>
     <div id="error-message-4" style="color: red; text-align: center; margin-top: 10px;"></div>
     <div class="center">
-      <button class="button" id="toPage5" disabled>다음</button>
+      <button class="button" id="next-button-4" disabled>다음</button>
     </div>
   </div>
 
@@ -125,7 +185,7 @@
     <div class="gear-grid" id="gear-grid-5"></div>
     <div id="error-message-5" style="color: red; text-align: center; margin-top: 10px;"></div>
     <div class="center">
-      <button class="button" id="toPage6" disabled>다음</button>
+      <button class="button" id="next-button-5" disabled>다음</button>
     </div>
   </div>
 
@@ -138,7 +198,7 @@
     <div class="gear-grid" id="gear-grid-6"></div>
     <div id="error-message-6" style="color: red; text-align: center; margin-top: 10px;"></div>
     <div class="center">
-      <button class="button" id="toPage7" disabled>다음</button>
+      <button class="button" id="next-button-6" disabled>다음</button>
     </div>
   </div>
 
@@ -150,8 +210,8 @@
     </div>
     <div class="gear-grid" id="gear-grid-7"></div>
     <div id="error-message-7" style="color: red; text-align: center; margin-top: 10px;"></div>
-    <div class="center">
-      <button class="button" id="toPage8" disabled>다음</button>
+    <div class="center button-group" id="final-buttons">
+      <button class="button" id="next-button-7" disabled>다음</button>
     </div>
   </div>
 
@@ -162,18 +222,61 @@
       <p id="cert-siteName"></p>
       <p id="cert-workerName"></p>
       <p id="cert-workerAffiliation"></p>
+      <p id="final-score-display">최종 점수: <span id="final-score">0</span>점</p>
       <p>보호구 교육을 모두 수료하셨습니다.</p>
     </div>
     <div style="text-align: center;">
       <p>관리자에게 수료증 화면을 보여주세요</p>
       <button class="button" id="saveCert">저장하기</button>
       <button class="button" id="homeButton">홈으로</button>
+      
+      <h3>🏆 이번 주 랭킹</h3>
+      <div id="ranking-loading" class="loading">랭킹을 불러오는 중...</div>
+      <table id="ranking-table" class="ranking-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>순위</th>
+            <th>근로자 이름</th>
+            <th>현장명</th>
+            <th>소속</th>
+            <th>점수</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-body">
+        </tbody>
+      </table>
     </div>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  
   <!-- html2canvas (수료증 캡쳐용) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
+    // Firebase 설정 (실제 프로젝트 설정으로 교체 필요)
+    const firebaseConfig = {
+      // 여기에 실제 Firebase 프로젝트 설정을 넣어주세요
+      apiKey: "AIzaSyDqZFIp_jzaUFiNlZxO3AYI3b8H9zDgyW4",
+      authDomain: "training-private-equipment.firebaseapp.com",
+      projectId: "training-private-equipment",
+      storageBucket: "training-private-equipment.firebasestorage.app",
+      messagingSenderId: "428074253490",
+      appId: "1:428074253490:web:77d4040f8af17338795dab"
+    };
+
+    // Firebase 초기화 (설정이 없으면 로컬 스토리지 사용)
+    let db = null;
+    try {
+      if (firebaseConfig.apiKey !== "your-api-key") {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+      }
+    } catch (error) {
+      console.log("Firebase 설정이 없어 로컬 스토리지를 사용합니다.");
+    }
+
     // 각 페이지별 보호구 데이터
     const pageGearData = {
       3: [
@@ -218,7 +321,27 @@
       ]
     };
 
-    let currentPage = 3;
+    // 게임 상태 변수
+    let currentScore = 0;
+    let gameSequence = [3, 4, 5, 6, 7]; // 기본 페이지 순서
+    let currentSequenceIndex = 0;
+    let hasCompletedFirstCycle = false;
+    let isInRandomCycle = false;
+
+    // 점수 업데이트 함수
+    function updateScore() {
+      currentScore += 1;
+      document.getElementById('current-score').textContent = currentScore;
+    }
+
+    // 점수 표시/숨김
+    function showScore() {
+      document.getElementById('score-display').style.display = 'block';
+    }
+
+    function hideScore() {
+      document.getElementById('score-display').style.display = 'none';
+    }
 
     // 페이지 전환 이벤트
     document.getElementById('startButton').addEventListener('click', function() {
@@ -232,41 +355,92 @@
         alert('현장명, 근로자 이름, 소속을 모두 입력해주세요.');
         return;
       }
-      currentPage = 3;
+      
+      // 게임 초기화
+      currentScore = 0;
+      currentSequenceIndex = 0;
+      hasCompletedFirstCycle = false;
+      isInRandomCycle = false;
+      gameSequence = [3, 4, 5, 6, 7];
+      
+      document.getElementById('current-score').textContent = currentScore;
+      showScore();
       showPage('page3');
       initializeGame(3);
     });
 
-    document.getElementById('toPage4').addEventListener('click', function() {
-      currentPage = 4;
-      showPage('page4');
-      initializeGame(4);
-    });
+    // 다음 버튼 이벤트 바인딩 함수
+    function bindNextButtonEvents() {
+      // 기존 이벤트 리스너 제거
+      document.querySelectorAll('[id^="next-button-"]').forEach(button => {
+        button.replaceWith(button.cloneNode(true));
+      });
 
-    document.getElementById('toPage5').addEventListener('click', function() {
-      currentPage = 5;
-      showPage('page5');
-      initializeGame(5);
-    });
+      // 새로운 이벤트 리스너 추가
+      document.getElementById('next-button-3').addEventListener('click', () => goToNextPage());
+      document.getElementById('next-button-4').addEventListener('click', () => goToNextPage());
+      document.getElementById('next-button-5').addEventListener('click', () => goToNextPage());
+      document.getElementById('next-button-6').addEventListener('click', () => goToNextPage());
+      document.getElementById('next-button-7').addEventListener('click', () => goToNextPage());
+    }
 
-    document.getElementById('toPage6').addEventListener('click', function() {
-      currentPage = 6;
-      showPage('page6');
-      initializeGame(6);
-    });
+    // 다음 페이지로 이동
+    function goToNextPage() {
+      updateScore();
+      currentSequenceIndex++;
 
-    document.getElementById('toPage7').addEventListener('click', function() {
-      currentPage = 7;
-      showPage('page7');
-      initializeGame(7);
-    });
+      if (currentSequenceIndex >= gameSequence.length) {
+        // 사이클 완료
+        if (!hasCompletedFirstCycle) {
+          hasCompletedFirstCycle = true;
+          showCycleCompleteButtons();
+        } else {
+          // 추가 사이클 완료 - 새로운 랜덤 사이클 시작 또는 종료 선택
+          showCycleCompleteButtons();
+        }
+        return;
+      }
 
-    document.getElementById('toPage8').addEventListener('click', function() {
+      const nextPageNum = gameSequence[currentSequenceIndex];
+      showPage(`page${nextPageNum}`);
+      initializeGame(nextPageNum);
+    }
+
+    // 사이클 완료 시 버튼 표시
+    function showCycleCompleteButtons() {
+      const finalButtons = document.getElementById('final-buttons');
+      finalButtons.innerHTML = `
+        <button class="button" onclick="goToPage8()">다음</button>
+        <button class="restart-button" onclick="startNewRandomCycle()">다시 학습하기</button>
+      `;
+    }
+
+    // 페이지8로 이동
+    function goToPage8() {
+      hideScore();
+      document.getElementById('final-score').textContent = currentScore;
       document.getElementById('cert-siteName').innerText = "현장명: " + document.getElementById('siteName').value;
       document.getElementById('cert-workerName').innerText = "근로자 이름: " + document.getElementById('workerName').value;
       document.getElementById('cert-workerAffiliation').innerText = "소속: " + document.getElementById('workerAffiliation').value;
       showPage('page8');
-    });
+      saveScoreAndLoadRanking();
+    }
+
+    // 새로운 랜덤 사이클 시작
+    function startNewRandomCycle() {
+      isInRandomCycle = true;
+      gameSequence = shuffle([3, 4, 5, 6, 7]);
+      currentSequenceIndex = 0;
+      
+      const firstPageNum = gameSequence[0];
+      showPage(`page${firstPageNum}`);
+      initializeGame(firstPageNum);
+      
+      // 마지막 페이지의 버튼 초기화
+      const finalButtons = document.getElementById('final-buttons');
+      finalButtons.innerHTML = `<button class="button" id="next-button-7" disabled>다음</button>`;
+      bindNextButtonEvents();
+    }
 
     document.getElementById('homeButton').addEventListener('click', function() {
       location.reload();
@@ -314,7 +488,7 @@
       workerContainer.querySelectorAll('.overlay').forEach(overlay => overlay.remove());
       
       // 다음 버튼 비활성화
-      const nextButton = document.getElementById(`toPage${pageNum + 1}`);
+      const nextButton = document.getElementById(`next-button-${pageNum}`);
       if (nextButton) nextButton.disabled = true;
       
       document.getElementById(`error-message-${pageNum}`).innerText = '';
@@ -365,8 +539,150 @@
     function checkAllCorrectApplied(pageNum) {
       const gearItems = pageGearData[pageNum];
       const allApplied = gearItems.filter(item => item.correct).every(item => item.applied);
-      const nextButton = document.getElementById(`toPage${pageNum + 1}`);
+      
+      const nextButton = document.getElementById(`next-button-${pageNum}`);
       if (nextButton) nextButton.disabled = !allApplied;
+    }
+
+    // 점수 저장 및 랭킹 로드
+    async function saveScoreAndLoadRanking() {
+      const playerData = {
+        name: document.getElementById('workerName').value,
+        siteName: document.getElementById('siteName').value,
+        affiliation: document.getElementById('workerAffiliation').value,
+        score: currentScore,
+        timestamp: new Date()
+      };
+
+      try {
+        if (db) {
+          // Firestore 사용
+          await saveToFirestore(playerData);
+          await loadRankingFromFirestore();
+        } else {
+          // 로컬 스토리지 사용
+          saveToLocalStorage(playerData);
+          loadRankingFromLocalStorage();
+        }
+      } catch (error) {
+        console.error('점수 저장 실패:', error);
+        // Firestore 실패시 로컬 스토리지로 fallback
+        saveToLocalStorage(playerData);
+        loadRankingFromLocalStorage();
+      }
+    }
+
+    // Firestore에 저장
+    async function saveToFirestore(playerData) {
+      const weekId = getKoreanWeekId();
+      const rankingRef = db.collection('rankings').doc(weekId);
+      
+      const doc = await rankingRef.get();
+      let rankings = [];
+      
+      if (doc.exists) {
+        rankings = doc.data().rankings || [];
+      }
+      
+      // 현재 플레이어 점수가 상위 5명에 들어가는지 확인
+      rankings.push(playerData);
+      rankings.sort((a, b) => b.score - a.score);
+      
+      if (rankings.length > 5) {
+        rankings = rankings.slice(0, 5); // 상위 5명만 유지
+      }
+      
+      await rankingRef.set({ rankings: rankings });
+    }
+
+    // Firestore에서 랭킹 로드
+    async function loadRankingFromFirestore() {
+      const weekId = getKoreanWeekId();
+      const rankingRef = db.collection('rankings').doc(weekId);
+      
+      const doc = await rankingRef.get();
+      let rankings = [];
+      
+      if (doc.exists) {
+        rankings = doc.data().rankings || [];
+      }
+      
+      displayRanking(rankings);
+    }
+
+    // 로컬 스토리지에 저장
+    function saveToLocalStorage(playerData) {
+      const weekId = getKoreanWeekId();
+      const key = `rankings_${weekId}`;
+      let rankings = JSON.parse(localStorage.getItem(key) || '[]');
+      
+      rankings.push(playerData);
+      rankings.sort((a, b) => b.score - a.score);
+      
+      if (rankings.length > 5) {
+        rankings = rankings.slice(0, 5); // 상위 5명만 유지
+      }
+      
+      localStorage.setItem(key, JSON.stringify(rankings));
+    }
+
+    // 로컬 스토리지에서 랭킹 로드
+    function loadRankingFromLocalStorage() {
+      const weekId = getKoreanWeekId();
+      const key = `rankings_${weekId}`;
+      const rankings = JSON.parse(localStorage.getItem(key) || '[]');
+      displayRanking(rankings);
+    }
+
+    // 한국시간 기준 주차 ID 생성 (일요일 24시에 초기화)
+    function getKoreanWeekId() {
+      // 한국시간 (UTC+9) 계산
+      const now = new Date();
+      const koreanTime = new Date(now.getTime() + (9 * 60 * 60 * 1000));
+      
+      // 해당 주의 일요일 찾기
+      const sunday = new Date(koreanTime);
+      sunday.setDate(koreanTime.getDate() - koreanTime.getDay());
+      sunday.setHours(0, 0, 0, 0);
+      
+      const year = sunday.getFullYear();
+      const month = String(sunday.getMonth() + 1).padStart(2, '0');
+      const day = String(sunday.getDate()).padStart(2, '0');
+      
+      return `${year}-${month}-${day}`;
+    }
+
+    // 랭킹 표시
+    function displayRanking(rankings) {
+      document.getElementById('ranking-loading').style.display = 'none';
+      document.getElementById('ranking-table').style.display = 'table';
+      
+      const tbody = document.getElementById('ranking-body');
+      tbody.innerHTML = '';
+      
+      for (let i = 0; i < 5; i++) {
+        const row = tbody.insertRow();
+        const rank = i + 1;
+        
+        if (i < rankings.length) {
+          const ranking = rankings[i];
+          row.innerHTML = `
+            <td>${rank}</td>
+            <td>${ranking.name}</td>
+            <td>${ranking.siteName}</td>
+            <td>${ranking.affiliation}</td>
+            <td>${ranking.score}</td>
+          `;
+        } else {
+          row.innerHTML = `
+            <td>${rank}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+          `;
+        }
+      }
     }
 
     document.getElementById('saveCert').addEventListener('click', function() {
@@ -378,6 +694,9 @@
         link.click();
       });
     });
+
+    // 초기 이벤트 바인딩
+    bindNextButtonEvents();
   </script>
 </body>
 </html>
