@@ -400,14 +400,8 @@
       currentSequenceIndex++;
 
       if (currentSequenceIndex >= gameSequence.length) {
-        // 사이클 완료
-        if (!hasCompletedFirstCycle) {
-          hasCompletedFirstCycle = true;
-          showCycleCompleteButtons();
-        } else {
-          // 추가 사이클 완료 - 새로운 랜덤 사이클 시작 또는 종료 선택
-          showCycleCompleteButtons();
-        }
+        // 사이클 완료 - 페이지8로 이동
+        goToPage8();
         return;
       }
 
@@ -416,11 +410,26 @@
       initializeGame(nextPageNum);
     }
 
+    // 게임 완료 체크 (보호구를 모두 착용했을 때 호출)
+    function checkGameComplete(pageNum) {
+      const gearItems = pageGearData[pageNum];
+      const allApplied = gearItems.filter(item => item.correct).every(item => item.applied);
+      
+      const nextButton = document.getElementById(`next-button-${pageNum}`);
+      if (nextButton) nextButton.disabled = !allApplied;
+      
+      // 모든 보호구를 착용했고, 이것이 사이클의 마지막 페이지인 경우
+      if (allApplied && currentSequenceIndex === gameSequence.length - 1) {
+        if (hasCompletedFirstCycle || currentSequenceIndex === 4) { // 첫 사이클 완료 후 또는 첫 사이클의 마지막
+          hasCompletedFirstCycle = true;
+          showCycleCompleteButtons(pageNum);
+        }
+      }
+    }
+
     // 사이클 완료 시 버튼 표시
-    function showCycleCompleteButtons() {
-      // 현재 사이클의 마지막 페이지 찾기
-      const lastPageNum = gameSequence[gameSequence.length - 1];
-      const buttonContainer = document.getElementById(`button-container-${lastPageNum}`);
+    function showCycleCompleteButtons(pageNum) {
+      const buttonContainer = document.getElementById(`button-container-${pageNum}`);
       
       if (buttonContainer) {
         buttonContainer.innerHTML = `
@@ -558,11 +567,7 @@
     }
 
     function checkAllCorrectApplied(pageNum) {
-      const gearItems = pageGearData[pageNum];
-      const allApplied = gearItems.filter(item => item.correct).every(item => item.applied);
-      
-      const nextButton = document.getElementById(`next-button-${pageNum}`);
-      if (nextButton) nextButton.disabled = !allApplied;
+      checkGameComplete(pageNum);
     }
 
     // 점수 저장 및 랭킹 로드
