@@ -425,16 +425,45 @@
         console.log(`🎯 기회 차감: ${remainingChances} 남음 (사이클 ${cycleCount})`);
         
         if (remainingChances <= 0) {
-          // 기회 소진 시 게임 종료
-          console.log('💀 기회 소진으로 게임 종료');
+          // 기회 소진 시 다음 페이지로 이동 (페이지별 기회 소진)
+          console.log('💀 페이지 기회 소진으로 다음 페이지로 이동');
           setTimeout(() => {
-            alert(`기회를 모두 소진했습니다!\n현재 점수: ${currentScore}점\n게임이 종료됩니다.`);
-            goToPage8();
+            alert(`이 페이지의 기회를 모두 소진했습니다!\n다음 페이지로 이동합니다.`);
+            // 현재 페이지의 올바른 보호구들을 모두 착용 처리
+            autoCompleteCurrentPage();
+            goToNextPage();
           }, 500);
-          return true; // 게임 종료됨
+          return true; // 페이지 완료됨
         }
       }
       return false; // 게임 계속
+    }
+
+    // 현재 페이지의 올바른 보호구들을 자동으로 착용 처리
+    function autoCompleteCurrentPage() {
+      const currentPageNum = gameSequence[currentSequenceIndex];
+      const gearItems = pageGearData[currentPageNum];
+      
+      // 올바른 보호구들을 모두 착용 상태로 변경
+      gearItems.forEach(item => {
+        if (item.correct && !item.applied) {
+          item.applied = true;
+          addOverlayImage(item, currentPageNum);
+          
+          // 해당 썸네일 이미지의 투명도 변경
+          const gearGrid = document.getElementById(`gear-grid-${currentPageNum}`);
+          const imgElement = gearGrid.querySelector(`img[data-id="${item.id}"]`);
+          if (imgElement) {
+            imgElement.style.opacity = 0.5;
+          }
+        }
+      });
+      
+      // 다음 버튼 활성화
+      const nextButton = document.getElementById(`next-button-${currentPageNum}`);
+      if (nextButton) nextButton.disabled = false;
+      
+      console.log(`🤖 페이지 ${currentPageNum} 자동 완료 처리`);
     }
 
     // 사이클별 기회 설정
@@ -529,6 +558,11 @@
       }
 
       const nextPageNum = gameSequence[currentSequenceIndex];
+      
+      // 🔄 페이지 이동 시 기회 초기화
+      setChancesForCycle();
+      console.log(`📄 페이지 ${nextPageNum}로 이동 - 기회 초기화: ${remainingChances}`);
+      
       showPage(`page${nextPageNum}`);
       initializeGame(nextPageNum);
     }
@@ -632,6 +666,13 @@
       const gearGrid = document.getElementById(`gear-grid-${pageNum}`);
       gearGrid.innerHTML = '';
       
+      // 🔄 첫 페이지가 아닌 경우에만 기회 초기화 (goToNextPage에서 이미 처리됨)
+      // 첫 페이지인 경우에만 기회 설정
+      if (currentSequenceIndex === 0) {
+        setChancesForCycle();
+        console.log(`🎮 첫 페이지 ${pageNum} 시작 - 기회: ${remainingChances}`);
+      }
+      
       shuffledItems.forEach(item => {
         const gearDiv = document.createElement('div');
         gearDiv.className = 'gear-item';
@@ -671,9 +712,9 @@
       
       // 첫 번째 사이클이 아닌 경우에만 기회 차감
       if (cycleCount > 1) {
-        const gameEnded = decreaseChances();
-        if (gameEnded) {
-          return; // 게임이 종료된 경우 더 이상 진행하지 않음
+        const pageCompleted = decreaseChances();
+        if (pageCompleted) {
+          return; // 페이지가 완료된 경우 더 이상 진행하지 않음
         }
       }
 
